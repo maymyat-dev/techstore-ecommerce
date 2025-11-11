@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 
 type UserButtonProps = {
@@ -22,13 +23,14 @@ type UserButtonProps = {
 };
 
 const UserButton = ({ user }: UserButtonProps) => {
+  const router = useRouter();
   return (
     <div className="flex items-center">
       {user?.email && (
         <span className="mr-3 text-sm text-muted-foreground">
           👋 Welcome,{" "}
           <span className="font-semibold text-foreground">
-            {user.name ?? user.email}
+            {user.name?.slice(0, 5) ?? user.email}
           </span>
         </span>
       )}
@@ -80,9 +82,9 @@ const UserButton = ({ user }: UserButtonProps) => {
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild onClick={()=>router.push("/dashboard/settings")}>
               <Link
-                href="/settings"
+                href="/dashboard/settings"
                 className="flex items-center gap-3 text-sm font-medium text-foreground hover:text-primary transition-all duration-200 group"
               >
                 <Settings className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-transform duration-300 group-hover:rotate-180" />

@@ -6,10 +6,9 @@ import { ModeToggle } from '@/components/mode-button'
 
 const AppNav = async() => {
     const session = await auth();
-    console.log(session);
 
   return (
-      <div className='w-full h-16 border-b border-b-slate-200 flex items-center justify-between px-4'>
+      <div className='w-full h-16 border-b border-b-slate-200 flex items-center justify-between px-4 mb-10'>
       <NavLogo />
       <div className='flex gap-2 '>
         

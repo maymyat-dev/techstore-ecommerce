@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 
 import { Toaster, toast } from "sonner";
 import "./globals.css";
+import AppNav from "@/components/ui/navigation/app-nav";
 
 export const metadata: Metadata = {
   title: "E-commerce",
@@ -19,8 +20,11 @@ export default function RootLayout({
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body className={`antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <AppNav/>
+          <section className="max-w-7xl mx-auto px-5">
+            {children}
           <Toaster position="top-center" richColors closeButton />
+          </section>
         </ThemeProvider>
       </body>
     </html>
