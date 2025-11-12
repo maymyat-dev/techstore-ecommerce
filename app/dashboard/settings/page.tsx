@@ -16,8 +16,8 @@ const settingsPage = async () => {
         </div>
 
         <div className="space-y-4 flex-1">
-          <ChangePassword />
-          <TwoFactorAuthentication />
+          
+          { !session.user.isOauth && (<><ChangePassword email={session.user.email} /> <TwoFactorAuthentication /></>)}
         </div>
       </main>
     </SettingCard>
