@@ -1,6 +1,6 @@
 "use client";
 import { Session } from "next-auth";
-import React from "react";
+import React, { useState } from "react";
 import { SettingCard } from "./settings-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { UserRoundPen } from "lucide-react";
@@ -27,6 +27,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import ProfileForm from "./profile-form";
 
 type ProfileCardProps = {
   session: Session;
@@ -34,11 +35,16 @@ type ProfileCardProps = {
 
 const ProfileCard = ({ session }: ProfileCardProps) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => {
+    setIsOpen(false);
+  }
 
   return (
     <SettingCard>
       <div className="flex justify-between items-start gap-2 rounded-2xl">
-        <div className="flex items-center gap-2">
+        <div className="md:flex flex-none items-center md:gap-2 mb">
           <Avatar>
             <AvatarImage
               src={session.user?.image!}
@@ -49,7 +55,7 @@ const ProfileCard = ({ session }: ProfileCardProps) => {
               {session.user?.name?.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div>
+          <div className="mt-2 md:mt-0">
             <h3 className="text-lg font-semibold">{session.user?.name}</h3>
             <p className="text-sm text-muted-foreground">
               {session.user?.email}
@@ -58,40 +64,56 @@ const ProfileCard = ({ session }: ProfileCardProps) => {
         </div>
 
         {isDesktop ? (
-          <Dialog>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <UserRoundPen className="w-5 h-5 text-muted-foreground hover:text-black cursor-pointer" />
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Do you want to edit your profile</DialogTitle>
+              <DialogHeader className="items-center">
+                <DialogTitle>Edit Profile</DialogTitle>
                 <DialogDescription>
-                  <Input type="text" className="w-full" />
-                  
+                  This will be your public display name.
                 </DialogDescription>
-                <DialogFooter>
-                  <Button>Save Changes</Button>
-                  <DialogClose>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                </DialogFooter>
               </DialogHeader>
+              <ProfileForm
+                name={session.user?.name!}
+                email={session.user?.email!}
+                setIsOpen = {handleOpen}
+              />
+              <DialogFooter className="block">
+                <DialogClose className="w-full">
+                  <Button variant="outline" className="w-full">
+                    Cancel
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         ) : (
-          <Drawer>
-            <DrawerTrigger asChild><UserRoundPen className="w-5 h-5 text-muted-foreground hover:text-black cursor-pointer" /></DrawerTrigger>
+          <Drawer open={isOpen} onOpenChange={setIsOpen}>
+            <DrawerTrigger asChild>
+              <UserRoundPen className="w-5 h-5 text-muted-foreground hover:text-black cursor-pointer" />
+            </DrawerTrigger>
             <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>Do you want to edit your profile</DrawerTitle>
+              <DrawerHeader className="items-center">
+                <DrawerTitle>Edit Profile</DrawerTitle>
                 <DrawerDescription>
-                  <Input type="text" className="w-full" />
+                  This will be your public display name.
                 </DrawerDescription>
               </DrawerHeader>
-              <DrawerFooter>
-                <Button>Save Changes</Button>
+                <div className="p-4">
+                  <ProfileForm
+                
+                name={session.user?.name!}
+                  email={session.user?.email!}
+                  setIsOpen = {handleOpen}
+              />
+              </div>
+              <DrawerFooter className="pt-0" >
                 <DrawerClose>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" className="w-full">
+                    Cancel
+                  </Button>
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>
