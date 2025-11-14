@@ -1,27 +1,37 @@
-"use server"
+"use server";
 
 import { eq } from "drizzle-orm";
-import { emailVerificationToken, resetPasswordVerificationToken, users } from "./../schema";
+import {
+  emailVerificationToken,
+  resetPasswordVerificationToken,
+  twoFactorToken,
+  users,
+} from "./../schema";
 import { db } from "..";
+import crypto from "crypto";
 
-
-const checkEmailVerificationToken = async (email: string | null, token?: string) => {
+const checkEmailVerificationToken = async (
+  email: string | null,
+  token?: string
+) => {
   try {
-    let verificationToken: {
-      id: string;
-      email: string;
-      token: string;
-      expires: Date;
-    } | undefined;
+    let verificationToken:
+      | {
+          id: string;
+          email: string;
+          token: string;
+          expires: Date;
+        }
+      | undefined;
     if (email) {
-     verificationToken = await db.query.emailVerificationToken.findFirst({
-      where: eq(emailVerificationToken.email, email!),
-    });
+      verificationToken = await db.query.emailVerificationToken.findFirst({
+        where: eq(emailVerificationToken.email, email!),
+      });
     }
     if (token) {
-     verificationToken = await db.query.emailVerificationToken.findFirst({
-      where: eq(emailVerificationToken.token, token!),
-    });
+      verificationToken = await db.query.emailVerificationToken.findFirst({
+        where: eq(emailVerificationToken.token, token!),
+      });
     }
     return verificationToken;
   } catch (err) {
@@ -41,54 +51,60 @@ export const generateEmailVerificationToken = async (email: string) => {
       .where(eq(emailVerificationToken.id, existingToken.id));
   }
 
-  const verificationToken = await db.insert(emailVerificationToken).values({
-    email,
-    token,
-    expires,
-  }).returning();
-  
+  const verificationToken = await db
+    .insert(emailVerificationToken)
+    .values({
+      email,
+      token,
+      expires,
+    })
+    .returning();
+
   return verificationToken;
 };
 
-
 export const confirmEmailWithToken = async (token: string) => {
-
   const existingToken = await checkEmailVerificationToken(null, token);
-  if(!existingToken) {
-    return { error: "Invalid Token"}
+  if (!existingToken) {
+    return { error: "Invalid Token" };
   }
 
-  const isExpired = new Date() > new Date(existingToken.expires)
+  const isExpired = new Date() > new Date(existingToken.expires);
   if (isExpired) {
-    return { error: "Expired Token"}
+    return { error: "Expired Token" };
   }
 
-  const existingUser = await db.query.users.findFirst({ where: eq(users.email, existingToken.email) });
-  
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, existingToken.email),
+  });
+
   if (!existingUser) {
-    return { error: "User not found"}
+    return { error: "User not found" };
   }
 
-  await db.update(users).set({ 
-    emailVerified: new Date(),
-    email: existingToken.email
-  }).where(eq(users.id, existingUser.id))
+  await db
+    .update(users)
+    .set({
+      emailVerified: new Date(),
+      email: existingToken.email,
+    })
+    .where(eq(users.id, existingUser.id));
 
-  await db.delete(emailVerificationToken).where(eq(emailVerificationToken.id, existingToken.id))
+  await db
+    .delete(emailVerificationToken)
+    .where(eq(emailVerificationToken.id, existingToken.id));
 
-  return { success: "Email verified successfully!"}
-
-} 
+  return { success: "Email verified successfully!" };
+};
 
 const checkResetPasswordToken = async (email: string) => {
   try {
-    const passwordResetToken  = await db.query.emailVerificationToken.findFirst({
-      where: eq(emailVerificationToken.email, email)
-    })
-    return passwordResetToken
-  }
-  catch (error) {
-    return null
+    const passwordResetToken = await db.query.emailVerificationToken.findFirst({
+      where: eq(emailVerificationToken.email, email),
+    });
+    return passwordResetToken;
+  } catch (error) {
+    return null;
   }
 };
 
@@ -104,18 +120,59 @@ export const generatePasswordResetToken = async (email: string) => {
       .where(eq(resetPasswordVerificationToken.id, existingToken.id));
   }
 
-  const passwordResetToken = await db.insert(resetPasswordVerificationToken).values({
-    email,
-    token,
-    expires,
-  }).returning();
-  
+  const passwordResetToken = await db
+    .insert(resetPasswordVerificationToken)
+    .values({
+      email,
+      token,
+      expires,
+    })
+    .returning();
+
   return passwordResetToken;
 };
 
 export const checkPasswordResetTokenByToken = async (token: string) => {
-  const passwordResetToken = await db.query.resetPasswordVerificationToken.findFirst({
-    where: eq(resetPasswordVerificationToken.token, token)
-  })
-  return passwordResetToken
-}
+  const passwordResetToken =
+    await db.query.resetPasswordVerificationToken.findFirst({
+      where: eq(resetPasswordVerificationToken.token, token),
+    });
+  return passwordResetToken;
+};
+
+export const getTwoFactorCodeByEmail = async (email: string) => {
+  try {
+    const existingToken = await db.query.twoFactorToken.findFirst({
+      where: eq(twoFactorToken.email, email),
+    });
+    return existingToken;
+  } catch (error) {
+    return null;
+  }
+};
+export const generateTwoFactorCode = async (email: string) => {
+  try {
+    const code = crypto.randomInt(100000, 1000000).toString();
+    const expires = new Date(new Date().getTime() + 30 * 60 * 1000);
+
+    const existingCode = await getTwoFactorCodeByEmail(email);
+
+    if (existingCode) {
+      await db
+        .delete(twoFactorToken)
+        .where(eq(twoFactorToken.id, existingCode.id));
+    }
+    const twoFactorCode = await db
+      .insert(twoFactorToken)
+      .values({
+        email,
+        token: code,
+        expires,
+      })
+      .returning();
+
+    return twoFactorCode;
+  } catch (error) {
+    return null;
+  }
+};

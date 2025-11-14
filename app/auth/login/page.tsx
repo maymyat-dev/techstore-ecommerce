@@ -1,12 +1,19 @@
 "use client";
 import AuthForm from "@/components/auth/auth-form";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { loginSchema } from "@/types/login-schema";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -14,62 +21,117 @@ import { cn } from "@/lib/utils";
 import { useAction } from "next-safe-action/hooks";
 import { login } from "@/server/actions/login-action";
 import { toast } from "sonner";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const Login = () => {
+  const [isTwoFactorOn, setIsTwoFactorOn] = useState(false);
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
-    }
-  })
+      code: "",
+    },
+  });
 
   const { execute, status, result } = useAction(login, {
     onSuccess: ({ data }) => {
-      form.reset();
       if (data?.error) {
-        toast.error(data?.error)
+        toast.error(data?.error);
+        form.reset();
       }
       if (data?.success) {
         toast.success(data?.success);
       }
-      form.reset();
-    }
+      if (data?.twoFactor) {
+        toast.success(data?.twoFactor);
+        setIsTwoFactorOn(true);
+      }
+    },
   });
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    const { email, password } = values;
-    execute({ email, password });
-  }
+    const { email, password, code } = values;
+    execute({ email, password, code });
+  };
   return (
     <AuthForm
-      formTitle="Login to your account"
+      formTitle={isTwoFactorOn ? "Two Factor Authentication" : "Login"}
       showProvider={true}
       footerLabel="Don't have an account?"
       footerHref="/auth/register"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div>
-          <FormField name="email" control={form.control} render={({field}) => (<FormItem>
-            <FormLabel>
-              Email
-            </FormLabel>
-            <FormControl>
-              <Input placeholder="user@gmail.com" {...field} />
-            </FormControl>
-            <FormMessage/>
-          </FormItem>)} />
-          <FormField name="password" control={form.control} render={({field}) => (<FormItem>
-            <FormLabel className="pt-5">
-              Password
-            </FormLabel>
-            <FormControl>
-              <Input type="password" placeholder="********" {...field} />
-            </FormControl>
-            <FormMessage/>
-          </FormItem>)} />
-          <div className="flex justify-end mt-2">
+          {isTwoFactorOn && (
+            <FormField
+              name="code"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="flex justify-center flex-col items-center">
+                  <FormLabel>We have sent a code to your email</FormLabel>
+                  <FormControl>
+                    <InputOTP
+                      maxLength={6}
+                      {...field}
+                      disabled={status === "executing"}
+                    >
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                      </InputOTPGroup>
+                      <InputOTPSeparator />
+                      <InputOTPGroup>
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+          {!isTwoFactorOn && (
+            <div>
+              <FormField
+                name="email"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="user@gmail.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="pt-5">Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="********"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end mt-2">
                 <Link
                   href="/auth/reset"
                   className="text-sm font-medium text-indigo-600 hover:underline"
@@ -77,10 +139,19 @@ const Login = () => {
                   Forgot password?
                 </Link>
               </div>
-        </div>
-        <Button className={cn("w-full bg-primary mt-5", status ==="executing" && "animate-pulse")} disabled={status === "executing"}>Login</Button>
+            </div>
+          )}
+          <Button
+            className={cn(
+              "w-full bg-primary mt-5",
+              status === "executing" && "animate-pulse"
+            )}
+            disabled={status === "executing"}
+          >
+            {isTwoFactorOn ? "Verify Code" : "Login"}
+          </Button>
         </form>
-     </Form>
+      </Form>
     </AuthForm>
   );
 };
