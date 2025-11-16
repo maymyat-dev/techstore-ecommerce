@@ -63,7 +63,7 @@ const AvatarUploadForm = ({ image, name, email }: AvatarUploadFormProps) => {
 
               <div className="flex flex-col">
                 <UploadButton
-                  className="ut-button:bg-primary hover:ut-button:bg-primary/90 ut-button:text-primary-foreground"
+                  className="ut-button:bg-primary hover:ut-button:bg-primary/90 hover:ut-button:ring-primary ut-button:ring-primary"
                   endpoint="imageUploader"
                   onUploadBegin={() => setIsUploading(true)}
                   onUploadError={(error) => {

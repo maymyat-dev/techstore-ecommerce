@@ -1,5 +1,6 @@
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -17,17 +18,18 @@ export function SettingCard({
   children,
 }: SettingCardProps) {
   return (
-    <Card className="w-full">
-      <CardHeader>
-        {title && (
-          <>
-            <CardTitle>{title}</CardTitle>
-            <CardDescription>{description}</CardDescription>
-          </>
-        )}
+    <Card className="w-full shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+  {title && (
+    <CardHeader>
+      <CardTitle>{title}</CardTitle>
+      <CardDescription>{description}</CardDescription>
+    </CardHeader>
+  )}
 
-        {children}
-      </CardHeader>
-    </Card>
+  <CardContent>
+    {children}
+  </CardContent>
+</Card>
+
   );
 }

@@ -58,7 +58,7 @@ const ChangePassword = ({ email }: ChangePasswordProps) => {
     execute({ email });
   };
   return (
-    <SettingCard>
+    <SettingCard >
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-base font-semibold tracking-tight mb-2">Change Password</h3>
