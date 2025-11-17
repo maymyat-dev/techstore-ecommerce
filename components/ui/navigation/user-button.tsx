@@ -105,7 +105,7 @@ const UserButton = ({ user }: UserButtonProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Button asChild variant="secondary" className="hover:shadow-md">
+        <Button asChild variant="secondary" className="hover:shadow-md h-[36px]">
           <Link href="/auth/login" className="flex items-center">
             <LogIn className="mr-2" size={16} /> Sign In
           </Link>

@@ -10,7 +10,7 @@ const AuthFooter = ({ footerLabel, footerHref }: AuthFooterProps) => {
   return (
     <p className="text-sm text-center text-gray-600">
       {footerLabel}{" "}
-      <Link href={footerHref} className="text-indigo-600 hover:underline">
+      <Link href={footerHref} className="text-primary hover:underline">
         Click here
       </Link>
     </p>

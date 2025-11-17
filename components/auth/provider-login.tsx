@@ -33,7 +33,7 @@ const ProviderLogin = () => {
           })
         }
       >
-        <ImGithub size={18} className="text-gray-800" /> Login with GitHub
+        <ImGithub size={18} /> Login with GitHub
       </Button>
     </div>
   );

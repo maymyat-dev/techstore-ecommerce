@@ -29,7 +29,7 @@ export const ResetPasswordEmailTemplate = ({
       </Preview>
       <Container style={container}>
         <ShoppingBag size={32} style={logo} />
-        <Text style={paragraph}>Hi {username},</Text>
+        <Text style={paragraph}>Hi {username || "there"},</Text>
         <Text style={paragraph}>
             Someone recently requested a password change for your account. If this was you, you can set a new password here:
         </Text>
@@ -89,7 +89,7 @@ const btnContainer = {
 };
 
 const button = {
-  backgroundColor: '#5F51E8',
+  backgroundColor: '#7f22fe',
   borderRadius: '3px',
   color: '#fff',
   fontSize: '16px',

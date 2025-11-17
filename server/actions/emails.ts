@@ -1,6 +1,6 @@
 "use server";
 import EmailConfirmationTemplate from "@/components/email-template";
-import resetPasswordEmailTemplate, { ResetPasswordEmailTemplate } from "@/components/password-reset";
+import resetPasswordEmailTemplate, { ResetPasswordEmailTemplate } from "@/components/password-reset-email";
 import TwoFactorEmail from "@/components/twofactor-email";
 import { getBaseUrl } from "@/lib/get-baseUrl";
 import { Resend } from "resend";
@@ -58,7 +58,7 @@ export const sendTwoFactorCodeEmail = async (
   const { data, error } = await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
     to: ["" + email],
-    subject: "Confirm your email to complete your reset password",
+    subject: "Confirm your email to complete your two factor authentication",
     react: TwoFactorEmail({
       validationCode: code,
     })

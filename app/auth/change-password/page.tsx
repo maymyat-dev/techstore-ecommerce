@@ -68,7 +68,7 @@ const ChangePassword = () => {
                 <FormItem>
                   <FormLabel className="pt-4">New Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="user@gmail.com" {...field} type="password" disabled={status === "executing"} />
+                    <Input placeholder="Enter your email address" {...field} type="password" disabled={status === "executing"} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

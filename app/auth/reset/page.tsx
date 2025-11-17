@@ -71,7 +71,7 @@ const ResetPassword = () => {
                 <FormItem>
                   <FormLabel className="pt-4">Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="user@gmail.com" {...field} />
+                    <Input placeholder="Enter your email address" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
