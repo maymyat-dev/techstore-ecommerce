@@ -4,7 +4,7 @@ import React from 'react'
 function DashboardPage() {
   return (
     
-     redirect("/dashboard/settings")
+     redirect("/dashboard")
   )
 }
 

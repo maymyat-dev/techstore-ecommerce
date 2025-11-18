@@ -6,6 +6,7 @@ import {
   integer,
   pgEnum,
   boolean,
+  real,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
@@ -103,3 +104,11 @@ export const twoFactorToken = pgTable(
     },
   ]
 )
+
+export const products = pgTable("products", {
+  id: text("id").primaryKey(),
+  description: text("description").notNull(),
+  title: text("title").notNull(),
+  price: real("price").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date"}).defaultNow()
+})

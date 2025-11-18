@@ -29,6 +29,13 @@
       "when": 1763081946568,
       "tag": "0003_illegal_blindfold",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763452378454,
+      "tag": "0004_talented_invisible_woman",
+      "breakpoints": true
     }
   ]
 }
