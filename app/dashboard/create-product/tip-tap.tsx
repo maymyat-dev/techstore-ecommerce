@@ -58,7 +58,7 @@ const Tiptap = ({ field }: TiptapProps) => {
     },
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
-      setValue(field, content, {
+      setValue("description", content, {
         shouldValidate: true,
         shouldDirty: true,
       });

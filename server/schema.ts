@@ -7,6 +7,7 @@ import {
   pgEnum,
   boolean,
   real,
+  serial,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
@@ -24,7 +25,7 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   isTwoFactorEnabled: boolean("isTwoFactorEnabled").default(false),
-  role: RoleEnum("roles").default("user"),
+  roles: RoleEnum("roles").default("user"),
 });
 
 export const accounts = pgTable(
@@ -106,7 +107,7 @@ export const twoFactorToken = pgTable(
 )
 
 export const products = pgTable("products", {
-  id: text("id").primaryKey(),
+  id: serial("id").primaryKey(),
   description: text("description").notNull(),
   title: text("title").notNull(),
   price: real("price").notNull(),
