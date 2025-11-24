@@ -1,7 +1,7 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { useAction } from "next-safe-action/hooks";
+import { deleteProduct } from "@/server/actions/products";
+import { toast } from "sonner";
 
 export type Product = {
   id: number;
@@ -21,6 +24,59 @@ export type Product = {
   description: string;
   image: string;
   variants: any;
+};
+
+const ActionsCell = (row: Row<Product>) => {
+  const product = row.original;
+
+  const { execute } = useAction(deleteProduct, {
+    onSuccess({ data }) {
+      if (data?.error) {
+        toast.error(data.error);
+      }
+      if (data?.success) {
+        toast.success(data.success);
+      }
+    },
+  });
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem className="cursor-pointer">
+          <Link
+            href={`/dashboard/create-product?edit_id=${product.id}`}
+            className="flex items-center gap-2"
+          >
+            <Pencil className="h-4 w-4" />
+            Edit Product
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer text-red-500 focus:text-red-500 flex items-center gap-2"
+          onClick={() => execute({ id: product.id })}
+        >
+          <Trash2 className="h-4 w-4 text-red-500 " />
+          Delete Product
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+          <Eye className="h-4 w-4" />
+          View product details
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 };
 
 export const columns: ColumnDef<Product>[] = [
@@ -83,32 +139,7 @@ max-w-[350px]"
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const product = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
-              <Link href={`/dashboard/create-product?edit_id=${product.id}`}>Edit Product</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer text-red-500">
-              Delete Product
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem className="cursor-pointer">
-              View product details
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <ActionsCell {...row} />;
     },
   },
 ];

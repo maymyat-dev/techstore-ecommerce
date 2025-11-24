@@ -1,12 +1,11 @@
 import DashBoardNavigation from "@/components/navigation/dashboard-nav";
 import { auth } from "@/server/auth";
 import {
-  ChartNoAxesCombined,
+  Archive,
+  BarChart2,
   Package,
-  PackagePlus,
-  Settings,
-  Truck,
-  Upload,
+  PackageCheck,
+  Settings2,
 } from "lucide-react";
 import React from "react";
 
@@ -14,12 +13,12 @@ const publicRoutes = [
   {
     label: "Orders",
     path: "/dashboard/orders",
-    icons: <Truck size={16} />,
+    icons: <Archive size={16} />,
   },
   {
     label: "Settings",
     path: "/dashboard/settings",
-    icons: <Settings size={16} />,
+    icons: <Settings2  size={16} />,
   },
 ];
 
@@ -27,12 +26,12 @@ const privateRoutes = [
   {
     label: "Analytics",
     path: "/dashboard/analytics",
-    icons: <ChartNoAxesCombined size={16} />,
+    icons: <BarChart2  size={16} />,
   },
   {
     label: "Create Product",
     path: "/dashboard/create-product",
-    icons: <PackagePlus size={16} />,
+    icons: <PackageCheck size={16} />,
   },
   {
     label: "Products",

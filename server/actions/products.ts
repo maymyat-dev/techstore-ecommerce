@@ -5,6 +5,7 @@ import { db } from "@/server";
 import { products } from "../schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import z from "zod";
 
 export const updateProduct = actionClient
   .schema(ProductSchema)
@@ -29,7 +30,7 @@ export const updateProduct = actionClient
           .insert(products)
           .values({ description, price, title })
           .returning();
-
+        revalidatePath("/dashboard/products");
         return {
           success: `${product[0].title} created successfully`,
           productId: product[0].id,
@@ -41,15 +42,31 @@ export const updateProduct = actionClient
     }
   });
 
-export const getSingleProduct = async(id: number) => {
+export const getSingleProduct = async (id: number) => {
   try {
     const product = await db.query.products.findFirst({
       where: eq(products.id, id),
-    })
-    if (!product) return { error: "Product not found" }
-    
-    return { success: "Product fetched successfully", data: product }
+    });
+    if (!product) return { error: "Product not found" };
+
+    return { success: "Product fetched successfully", data: product };
   } catch (error) {
     return { error: "Something went wrong" };
   }
- }
+};
+
+const deleteProductSchema = z.object({
+  id: z.number(),
+});
+export const deleteProduct = actionClient
+  .schema(deleteProductSchema)
+  .action(async({ parsedInput: { id } }) => {
+    try {
+      await db.delete(products).where(eq(products.id, id))
+      revalidatePath("/dashboard/products")
+
+      return { success: "Product deleted successfully"}
+    } catch (error) {
+      return {error: "Something went wrong."}
+      }
+  })
