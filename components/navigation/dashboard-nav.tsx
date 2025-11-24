@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
+
 type Route = {
   label: string;
   path: string;
@@ -16,17 +17,20 @@ type DashBoardNavigationProps = {
 const DashBoardNavigation = ({ routes }: DashBoardNavigationProps) => {
   const pathname = usePathname();
   return (
-    <nav className="mt-2 mb-6 border-b pb-2 ">
-      <div className="flex items-center gap-2 justify-center flex-wrap">
+    <nav className="mb-6">
+      <div className="flex justify-start gap-2 flex-wrap py-2 px-4 md:rounded-full shadow-sm rounded-sm bg-white dark:bg-gray-800">
         {routes.map((route, index) => (
-          <Link href={route.path} key={index}>
+          <Link href={route.path} key={index} passHref>
             <span
               className={cn(
-                "flex items-center gap-1 text-gray-400 font-medium text-sm",
-                pathname === route.path && "text-primary text-base font-bold"
+                "flex items-center gap-2 px-4 py-4 rounded-full cursor-pointer transition-all duration-200",
+                "font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700",
+
+                pathname === route.path &&
+                  "bg-primary text-white dark:bg-primary-600 dark:text-white hover:bg-primary/90 dark:hover:bg-primary-700 font-semibold"
               )}
             >
-              {route.icons} {route.label} {index !== routes.length - 1 && "|"}
+              {route.icons} {route.label}
             </span>
           </Link>
         ))}

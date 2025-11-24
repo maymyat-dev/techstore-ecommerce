@@ -67,7 +67,7 @@ export const columns: ColumnDef<Product>[] = [
         currency: "USD",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="font-bold text-green-500">{formatted}</div>;
     },
   },
 
@@ -85,8 +85,9 @@ export const columns: ColumnDef<Product>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" >
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">Edit Product</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Delete Product</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer text-red-500">Delete Product</DropdownMenuItem>
             <DropdownMenuSeparator />
 
             <DropdownMenuItem className="cursor-pointer">View product details</DropdownMenuItem>
