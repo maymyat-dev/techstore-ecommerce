@@ -18,6 +18,7 @@ import {
   Undo2,
   Redo2,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 type TiptapProps = {
@@ -64,6 +65,12 @@ const Tiptap = ({ field }: TiptapProps) => {
       });
     },
   });
+
+  useEffect(() => {
+    if (editor) {
+      editor.commands.setContent(field);
+    }
+  }, [editor, field]);
 
   return (
     <div className="space-y-2">

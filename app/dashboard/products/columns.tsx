@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 export type Product = {
   id: number;
@@ -34,7 +35,7 @@ export const columns: ColumnDef<Product>[] = [
       const imageSrc = row.getValue("image") as string;
       const title = row.getValue("title") as string;
       return (
-        <div className="w-16 h-16 flex items-center justify-center overflow-hidden rounded-md border">
+        <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-md border">
           <img
             src={imageSrc}
             alt={title}
@@ -53,7 +54,14 @@ export const columns: ColumnDef<Product>[] = [
     header: "Title",
     cell: ({ row }) => {
       return (
-        <div className="font-medium">{row.getValue("title") as string}</div>
+        <div
+          className="font-medium overflow-hidden
+whitespace-nowrap
+text-ellipsis
+max-w-[350px]"
+        >
+          {row.getValue("title") as string}
+        </div>
       );
     },
   },
@@ -75,6 +83,7 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
+      const product = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -83,14 +92,20 @@ export const columns: ColumnDef<Product>[] = [
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" >
+          <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Edit Product</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer text-red-500">Delete Product</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              <Link href={`/dashboard/create-product?edit_id=${product.id}`}>Edit Product</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer text-red-500">
+              Delete Product
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="cursor-pointer">View product details</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              View product details
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

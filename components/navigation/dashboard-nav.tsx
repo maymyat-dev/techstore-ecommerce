@@ -24,10 +24,9 @@ const DashBoardNavigation = ({ routes }: DashBoardNavigationProps) => {
             <span
               className={cn(
                 "flex items-center gap-2 px-4 py-4 rounded-full cursor-pointer transition-all duration-200",
-                "font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700",
-
+                "text-sm font-medium transition-all duration-300 ease-in-out",
                 pathname === route.path &&
-                  "bg-primary text-white dark:bg-primary-600 dark:text-white hover:bg-primary/90 dark:hover:bg-primary-700 font-semibold"
+                  "bg-primary text-white dark:bg-primary-600 dark:text-white font-semibold shadow-md shadow-primary/50"
               )}
             >
               {route.icons} {route.label}

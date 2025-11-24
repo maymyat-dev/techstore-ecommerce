@@ -24,13 +24,37 @@ import { Button } from "@/components/ui/button";
 import { DollarSign } from "lucide-react";
 import Tiptap from "./tip-tap";
 import { useAction } from "next-safe-action/hooks";
-import { updateProduct } from "@/server/actions/products";
+import { getSingleProduct, updateProduct } from "@/server/actions/products";
 import { toast } from "sonner";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const CreateProductForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editIdParams = searchParams.get("edit_id") || null;
+  const [editProduct, setEditProduct] = useState<string>("");
+
+  const isProductExist = async (id: string) => { 
+    if (editIdParams) {
+      const res = await getSingleProduct(Number(id));
+      if (res.error) {
+        toast.error(res.error);
+        router.push("/dashboard/products");
+        return;
+      }
+      if (res.success) {
+        setEditProduct(res.data.title);
+        form.setValue("title", res.data.title);
+        form.setValue("description", res.data.description);
+        form.setValue("price", res.data.price);
+        form.setValue("id", res.data.id);
+      }
+    }
+  }
+
+
   const form = useForm({
     resolver: zodResolver(ProductSchema),
     defaultValues: {
@@ -48,23 +72,28 @@ const CreateProductForm = () => {
       }
       if (data?.success) {
         toast.success(data.success);
-        form.reset();
         router.push(`/dashboard/products`);
       }
     },
   });
 
   const onSubmit = (values: z.infer<typeof ProductSchema>) => {
-    const { title, description, price } = values;
-    execute({ title, description, price });
+    const { id, title, description, price } = values;
+    execute({ id, title, description, price });
   };
+
+  useEffect(() => {
+    if (editIdParams) {
+      isProductExist(editIdParams);
+    }
+  },[])
 
 
   return (
     <>
       <Card className="w-full shadow-[0_0_15px_rgba(255,255,255,0.05)]">
         <CardHeader>
-          <CardTitle>Create Product</CardTitle>
+          <CardTitle>{ editIdParams ? "Edit Product" : "Create Product" }</CardTitle>
           <CardDescription></CardDescription>
         </CardHeader>
         <CardContent>
@@ -122,9 +151,9 @@ const CreateProductForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={status === "executing"} className={cn("w-full bg-primary mt-5 cursor-pointer",
-              status === "executing" && "animate-pulse")}>
-                Submit
+              <Button type="submit"  disabled={status === "executing"} className={cn("w-full bg-primary mt-5 cursor-pointer",
+              status === "executing" && "animate-pulse")} >
+                { editIdParams ? "Update Product" : "Create Product" }
               </Button>
             </form>
           </Form>
