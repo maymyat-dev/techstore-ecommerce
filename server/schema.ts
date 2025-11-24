@@ -25,7 +25,7 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   isTwoFactorEnabled: boolean("isTwoFactorEnabled").default(false),
-  roles: RoleEnum("roles").default("user"),
+  role: RoleEnum("roles").default("user").notNull(),
 });
 
 export const accounts = pgTable(
