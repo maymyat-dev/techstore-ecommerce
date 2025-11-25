@@ -94,7 +94,6 @@ const CreateProductForm = () => {
       <Card className="w-full shadow-[0_0_15px_rgba(255,255,255,0.05)]">
         <CardHeader>
           <CardTitle>{ editIdParams ? "Edit Product" : "Create Product" }</CardTitle>
-          <CardDescription></CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
