@@ -73,10 +73,10 @@ export function DataTable<TData, TValue>({
         </p>
       </CardHeader>
 
-      <div className="flex items-center gap-3">
+      <div className="flex justify-between items-center gap-3">
         <div className="relative w-full max-w-sm">
           <Input
-            placeholder="Search products..."
+            placeholder="Search products by title..."
             value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
             onChange={(e) =>
               table.getColumn("title")?.setFilterValue(e.target.value)

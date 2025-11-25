@@ -12,6 +12,7 @@ import {
 import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
 import { email } from "zod";
+import { relations } from "drizzle-orm";
 
 export const RoleEnum = pgEnum("roles", ["user", "admin"]);
 
@@ -69,7 +70,6 @@ export const emailVerificationToken = pgTable(
   })
 );
 
-
 export const resetPasswordVerificationToken = pgTable(
   "resetPasswordVerificationToke",
   {
@@ -95,7 +95,6 @@ export const twoFactorToken = pgTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
     email: text("email").notNull(),
     userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
-    
   },
   (token) => [
     {
@@ -104,12 +103,78 @@ export const twoFactorToken = pgTable(
       }),
     },
   ]
-)
+);
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   description: text("description").notNull(),
   title: text("title").notNull(),
   price: real("price").notNull(),
-  createdAt: timestamp("createdAt", { mode: "date"}).defaultNow()
-})
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+});
+
+export const productVariants = pgTable("productsVariants", {
+  id: serial("id").primaryKey(),
+  color: text("color").notNull(),
+  productType: text("productType").notNull(),
+  updated: timestamp("updated").defaultNow(),
+  productId: serial("productId")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+});
+
+export const variantImages = pgTable("variantImages", {
+  id: serial("id").primaryKey(),
+  image_url: text("image_url").notNull(),
+  name: text("name").notNull(),
+  size: text("size").notNull(),
+  order: real("order").notNull(),
+  variantId: serial("variantId")
+    .notNull()
+    .references(() => productVariants.id, { onDelete: "cascade" }),
+});
+
+export const variantTags = pgTable("variantTags", {
+  id: serial("id").primaryKey(),
+  tag: text("tag").notNull(),
+  variantId: serial("variantId")
+    .notNull()
+    .references(() => productVariants.id, { onDelete: "cascade" }),
+});
+
+export const productRelations = relations(products, ({ many }) => ({
+  productVariants: many(productVariants, {
+    relationName: "productVariants",
+  }),
+}));
+
+export const productVariantsRelations = relations(
+  productVariants,
+  ({ many, one }) => ({
+    product: one(products, {
+      fields: [productVariants.productId],
+      references: [products.id],
+      relationName: "productVariantsRelations",
+    }),
+    variantImages: many(variantImages, { relationName: "variantImages" }),
+    variantTags: many(variantTags, { relationName: "variantTags" }),
+  })
+);
+
+export const variantImagesRelations = relations(variantImages, ({ one })=> ({
+  productVariants 
+  : one(productVariants, {
+    fields: [variantImages.variantId],
+    references: [productVariants.id],
+    relationName: "variantImagesRelations",
+  })
+}))
+
+export const variantTagsRelations = relations(variantTags, ({ one })=> ({
+  productVariants 
+  : one(productVariants, {
+    fields: [variantTags.variantId],
+    references: [productVariants.id],
+    relationName: "variantTagsRelations",
+  })
+}))
