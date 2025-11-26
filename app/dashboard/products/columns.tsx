@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { ArrowUpDown, CirclePlus, Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,8 @@ import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 import { deleteProduct } from "@/server/actions/products";
 import { toast } from "sonner";
+import { VariantsWithImageTags } from "@/lib/infer-types";
+import VariantDialog from "@/components/products/variant-dialog";
 
 export type Product = {
   id: number;
@@ -23,7 +25,7 @@ export type Product = {
   title: string;
   description: string;
   image: string;
-  variants: any;
+  variants: VariantsWithImageTags[];
 };
 
 const ActionsCell = (row: Row<Product>) => {
@@ -104,6 +106,24 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "variants",
     header: "Variants",
+    cell: ({ row }) => {
+      const variants = row.getValue("variants") as VariantsWithImageTags[];
+      return <div>
+        {variants.map(variant => (
+          <div key={variant.id} className="mb-2">
+            
+            <div className="font-medium">{variant.color} - {variant.productType}</div>
+            <div className="text-sm text-gray-500">
+              Tags: {variant.variantTags.map(tag => tag.tag).join(", ")}
+            </div>
+          </div>
+        ))}
+        
+        <VariantDialog editMode={false} >
+<CirclePlus className="w-5 h-5 text-gray-500 hover:text-black duration-200 cursor-pointer" />
+          </VariantDialog>
+      </div>
+    },
   },
   {
     accessorKey: "title",
