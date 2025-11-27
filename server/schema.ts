@@ -134,7 +134,7 @@ export const variantImages = pgTable("variantImages", {
     .references(() => productVariants.id, { onDelete: "cascade" }),
 });
 
-export const variantTags = pgTable("variantTags", {
+  export const variantTags = pgTable("variantTags", {
   id: serial("id").primaryKey(),
   tag: text("tag").notNull(),
   variantId: serial("variantId")
@@ -154,7 +154,7 @@ export const productVariantsRelations = relations(
     product: one(products, {
       fields: [productVariants.productId],
       references: [products.id],
-      relationName: "productVariantsRelations",
+      relationName: "product",
     }),
     variantImages: many(variantImages, { relationName: "variantImages" }),
     variantTags: many(variantTags, { relationName: "variantTags" }),
@@ -162,19 +162,19 @@ export const productVariantsRelations = relations(
 );
 
 export const variantImagesRelations = relations(variantImages, ({ one })=> ({
-  productVariants 
-  : one(productVariants, {
+  productVariant: one(productVariants, {
     fields: [variantImages.variantId],
     references: [productVariants.id],
-    relationName: "variantImagesRelations",
+    relationName: "productVariant",
   })
 }))
 
+
 export const variantTagsRelations = relations(variantTags, ({ one })=> ({
-  productVariants 
+  productVariant
   : one(productVariants, {
     fields: [variantTags.variantId],
     references: [productVariants.id],
-    relationName: "variantTagsRelations",
+    relationName: "productVariant",
   })
 }))

@@ -1,13 +1,19 @@
-"use client"
- 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { VariantsWithImageTags } from '@/lib/infer-types'
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import React from 'react'
-import { DialogHeader } from '../ui/dialog'
-import z from "zod"
-import { VariantSchema } from "@/types/variant-schema"
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { VariantsWithImageTags } from "@/lib/infer-types";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import React from "react";
+import { DialogHeader } from "../ui/dialog";
+import z from "zod";
+import { VariantSchema } from "@/types/variant-schema";
 import {
   Form,
   FormControl,
@@ -15,94 +21,106 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import TagsInput from "./tags-input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import TagsInput from "./tags-input";
+import VariantImages from "./variant-images";
 
 type VariantDialogProps = {
-    children: React.ReactNode;
-    editMode: boolean;
-    productId?: number;
-    variant?: VariantsWithImageTags;
-}
+  children: React.ReactNode;
+  editMode: boolean;
+  productId?: number;
+  variant?: VariantsWithImageTags;
+};
 
-
-const variantDialog = ({ children, editMode, productId, variant }: VariantDialogProps) => {
-    
-    const form = useForm<z.infer<typeof VariantSchema>>({
+const variantDialog = ({
+  children,
+  editMode,
+  productId,
+  variant,
+}: VariantDialogProps) => {
+  const form = useForm<z.infer<typeof VariantSchema>>({
     resolver: zodResolver(VariantSchema),
-        defaultValues: {
-            tags: [],
-            variantImage: [],
-            color: "#000",
-            productId,
-            id: undefined,
-                productType: "Black ",
-            editMode,
-
-
+    defaultValues: {
+      tags: [],
+      variantImage: [],
+      color: "#000",
+      productId,
+      id: undefined,
+      productType: "Black ",
+      editMode,
     },
-    })
-    
-    function onSubmit(values: z.infer<typeof VariantSchema>) {
+  });
+
+  function onSubmit(values: z.infer<typeof VariantSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    console.log(values);
   }
-    return <Dialog>
-        <DialogTrigger>{children}</DialogTrigger>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>{editMode ? "Update Product's Variant" : "Create New Variant"}</DialogTitle>
-            </DialogHeader>
-            <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="productType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Variant Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Variant Title" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+  return (
+    <Dialog>
+      <DialogTrigger>{children}</DialogTrigger>
+      <DialogContent className="overflow-y-auto max-h-screen sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>
+            {editMode ? "Update Product's Variant" : "Create New Variant"}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Manage your product's variants</DialogDescription>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="productType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variant Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter Variant Title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="color"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variant Color</FormLabel>
+                  <FormControl>
+                    <Input type="color" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variant Tags</FormLabel>
+                  <FormControl>
+                    <TagsInput
+                      {...field}
+                      handleOnChange={(e) => field.onChange(e)}
                     />
-                    <FormField
-          control={form.control}
-          name="color"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Variant Color</FormLabel>
-              <FormControl>
-                <Input type="color" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-                    />
-                    <FormField
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Variant Tags</FormLabel>
-              <FormControl>
-                <TagsInput {...field} handleOnChange={(e)=>field.onChange(e)} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-                    <Button type="submit" className="w-full">{     editMode ? "Update Product's Variant" : "Create New Variant"}</Button>
-      </form>
-    </Form>
-            <DialogDescription>Manage your product's variants</DialogDescription>
-        </DialogContent>
-  </Dialog>
-}
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <VariantImages />
+            <Button type="submit" className="w-full">
+              {editMode ? "Update Product's Variant" : "Create New Variant"}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
-export default variantDialog
+export default variantDialog;
