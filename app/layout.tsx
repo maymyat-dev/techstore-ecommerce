@@ -2,7 +2,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 import "./globals.css";
 import AppNav from "@/components/ui/navigation/app-nav";
 
@@ -18,13 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
-      <body className={`antialiased`}>
+      <body className={`antialiased`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppNav/>
-          <section className="max-w-7xl mx-auto px-5">
+           <main className="max-w-7xl mx-auto px-5"> 
             {children}
+          </main>
           <Toaster position="top-center" richColors closeButton />
-          </section>
         </ThemeProvider>
       </body>
     </html>

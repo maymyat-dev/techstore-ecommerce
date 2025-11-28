@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import React from "react";
+import React, { useState } from "react";
 import { DialogHeader } from "../ui/dialog";
 import z from "zod";
 import { VariantSchema } from "@/types/variant-schema";
@@ -26,6 +26,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TagsInput from "./tags-input";
 import VariantImages from "./variant-images";
+import { useAction } from "next-safe-action/hooks";
+import { toast } from "sonner";
+import { createVariant } from "@/server/actions/variants";
 
 type VariantDialogProps = {
   children: React.ReactNode;
@@ -40,6 +43,7 @@ const variantDialog = ({
   productId,
   variant,
 }: VariantDialogProps) => {
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof VariantSchema>>({
     resolver: zodResolver(VariantSchema),
     defaultValues: {
@@ -53,13 +57,27 @@ const variantDialog = ({
     },
   });
 
+    const { execute, status, result } = useAction(createVariant, {
+      onSuccess: ({ data }) => {
+        setOpen(true)
+        if (data?.error) {
+          toast.error(data?.error);
+          form.reset();
+        }
+        if (data?.success) {
+          toast.success(data?.success);
+        }
+        
+      },
+    });
+
   function onSubmit(values: z.infer<typeof VariantSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
+    const { color, tags, variantImage, productType, productId, id, editMode } = values;
+    execute({ color, tags, variantImage, productType, productId, id, editMode });
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="overflow-y-auto max-h-screen sm:max-w-lg">
         <DialogHeader>

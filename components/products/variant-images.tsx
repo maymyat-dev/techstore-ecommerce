@@ -22,6 +22,8 @@ const VariantImages = () => {
 
   const [isUploading, setIsUploading] = useState(false);
 
+  const [pendingFileNames, setPendingFileNames] = useState<string[]>([]);
+
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: "variantImage",
@@ -44,10 +46,11 @@ const VariantImages = () => {
             <FormControl>
               <UploadDropzone
                 endpoint="variantImageUploader"
-                disabled={isUploading}
+                disabled={isUploading || fields.length >= 10}
                 className={cn(
                   "border border-dashed rounded-xl p-5 bg-muted/30 transition",
-                  isUploading && "opacity-60 pointer-events-none",
+                  (isUploading || fields.length >= 10) &&
+                    "opacity-60 pointer-events-none",
                   "hover:bg-muted/50",
                   "ut-allowed-content:text-primary",
                   "ut-label:text-primary",
@@ -64,6 +67,7 @@ const VariantImages = () => {
                   }
 
                   setIsUploading(true);
+                  setPendingFileNames(files.map((f) => f.name));
 
                   files.forEach((file) => {
                     append({
@@ -78,13 +82,27 @@ const VariantImages = () => {
                 }}
                 onUploadError={(error) => {
                   setIsUploading(false);
+
+                  const stored = getValues("variantImage");
+                  for (let i = stored.length - 1; i >= 0; i--) {
+                    if (
+                      stored[i].loading &&
+                      pendingFileNames.includes(stored[i].name)
+                    ) {
+                      remove(i);
+                    }
+                  }
+
+                  setPendingFileNames([]);
+
                   setError("variantImage", {
                     type: "manual",
-                    message: `Upload failed: ${error.message}`,
+                    message: `Upload failed: ${error.message}. Please check your network and try again.`,
                   });
                 }}
                 onClientUploadComplete={(res) => {
                   setIsUploading(false);
+                  setPendingFileNames([]);
 
                   const stored = getValues("variantImage");
 
@@ -96,7 +114,7 @@ const VariantImages = () => {
 
                       if (uploaded) {
                         update(index, {
-                          url: uploaded.ufsUrl, 
+                          url: uploaded.url,
                           name: uploaded.name,
                           size: uploaded.size,
                           key: uploaded.key,
@@ -114,15 +132,16 @@ const VariantImages = () => {
         )}
       />
 
-
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-4">
         {fields.map((field, index) => (
           <div
-            key={index}
+            key={field.id}
             className="relative rounded-lg overflow-hidden border shadow-sm group animate-fadeIn"
           >
             {field.loading ? (
-              <div className="w-full h-20 bg-gray-200 animate-pulse" />
+              <div className="w-full h-20 bg-gray-200 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+              </div>
             ) : (
               <img
                 src={field.url}
@@ -134,7 +153,8 @@ const VariantImages = () => {
             <button
               type="button"
               onClick={() => remove(index)}
-              className="absolute top-1 right-1 bg-black/60 rounded-full p-1 opacity-0 group-hover:opacity-100 transition duration-200 hover:bg-black"
+              className="absolute top-1 right-1 bg-black/60 rounded-full p-1 opacity-0 group-hover:opacity-100 transition duration-200 hover:bg-black z-10"
+              disabled={field.loading}
             >
               <X className="w-4 h-4 text-white" />
             </button>
@@ -143,7 +163,7 @@ const VariantImages = () => {
       </div>
 
       {isUploading && (
-        <div className="flex items-center text-primary text-sm gap-2">
+        <div className="flex items-center text-primary text-sm gap-2 mt-2">
           <Loader2 className="w-4 h-4 animate-spin" />
           Uploading...
         </div>

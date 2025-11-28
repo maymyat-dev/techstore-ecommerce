@@ -1,9 +1,8 @@
 import * as z from "zod";
-import { id } from "zod/v4/locales";
 
 export const VariantSchema = z.object({
   productId: z.number(),
-  id: z.number(),
+  id: z.number().optional(),
   editMode: z.boolean(),
   color: z.string().min(3, {
     message: "Color must be at least 3 characters long",
