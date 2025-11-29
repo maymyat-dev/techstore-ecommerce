@@ -18,6 +18,7 @@ import { deleteProduct } from "@/server/actions/products";
 import { toast } from "sonner";
 import { VariantsWithImageTags } from "@/lib/infer-types";
 import VariantDialog from "@/components/products/variant-dialog";
+import { Badge } from "@/components/ui/badge";
 
 export type Product = {
   id: number;
@@ -108,21 +109,26 @@ export const columns: ColumnDef<Product>[] = [
     header: "Variants",
     cell: ({ row }) => {
       const variants = row.getValue("variants") as VariantsWithImageTags[];
-      return <div>
-        {variants.map(variant => (
-          <div key={variant.id} className="mb-2">
-            
-            <div className="font-medium">{variant.color} - {variant.productType}</div>
-            <div className="text-sm text-gray-500">
-              Tags: {variant.variantTags.map(tag => tag.tag).join(", ")}
-            </div>
-          </div>
-        ))}
-        
-        <VariantDialog editMode={false} productId={row.original.id} >
-<CirclePlus className="w-5 h-5 text-gray-500 hover:text-black duration-200 cursor-pointer" />
+
+      return <div className="flex items-center gap-2 flex-wrap">
+          {variants.map((v) => (
+            <VariantDialog
+              key={v.id}
+              editMode={true}
+              variant={v}
+              productId={row.original.id}
+            >
+              <div
+                className="w-6 h-6 rounded-full border shadow-sm cursor-pointer hover:scale-105 transition"
+                style={{ backgroundColor: v.color }}
+              ></div>
+            </VariantDialog>
+          ))}
+
+          <VariantDialog editMode={false} productId={row.original.id}>
+            <CirclePlus className="w-5 h-5 text-gray-400 hover:text-black hover:scale-110 transition cursor-pointer" />
           </VariantDialog>
-      </div>
+        </div>
     },
   },
   {

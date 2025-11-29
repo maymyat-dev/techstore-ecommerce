@@ -38,7 +38,13 @@ export const ourFileRouter = {
     },
   }).onUploadComplete(async ({ metadata, file }) => {
 
-    console.log("variant file url", file.url);
+    console.log("variant file ufsUrl", file.ufsUrl);
+    return {
+    ufsUrl: file.ufsUrl,   
+    name: file.name,
+    size: file.size,
+    key: file.key,
+  };
   })
 } satisfies FileRouter;
 

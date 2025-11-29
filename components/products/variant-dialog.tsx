@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DialogHeader } from "../ui/dialog";
 import z from "zod";
 import { VariantSchema } from "@/types/variant-schema";
@@ -57,9 +57,10 @@ const variantDialog = ({
     },
   });
 
-    const { execute, status, result } = useAction(createVariant, {
-      onSuccess: ({ data }) => {
-        setOpen(true)
+  const { execute, status, result } = useAction(createVariant, {
+      
+    onSuccess: ({ data }) => {
+      setOpen(false)
         if (data?.error) {
           toast.error(data?.error);
           form.reset();
@@ -76,6 +77,8 @@ const variantDialog = ({
     const { color, tags, variantImage, productType, productId, id, editMode } = values;
     execute({ color, tags, variantImage, productType, productId, id, editMode });
   }
+
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{children}</DialogTrigger>

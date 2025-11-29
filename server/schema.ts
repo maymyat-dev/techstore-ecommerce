@@ -118,7 +118,7 @@ export const productVariants = pgTable("productsVariants", {
   color: text("color").notNull(),
   productType: text("productType").notNull(),
   updated: timestamp("updated").defaultNow(),
-  productId: serial("productId")
+  productId: integer("productId")
     .notNull()
     .references(() => products.id, { onDelete: "cascade" }),
 });
@@ -129,7 +129,7 @@ export const variantImages = pgTable("variantImages", {
   name: text("name").notNull(),
   size: text("size").notNull(),
   order: real("order").notNull(),
-  variantId: serial("variantId")
+  variantId: integer("variantId")
     .notNull()
     .references(() => productVariants.id, { onDelete: "cascade" }),
 });
@@ -137,15 +137,13 @@ export const variantImages = pgTable("variantImages", {
   export const variantTags = pgTable("variantTags", {
   id: serial("id").primaryKey(),
   tag: text("tag").notNull(),
-  variantId: serial("variantId")
+  variantId: integer("variantId")
     .notNull()
     .references(() => productVariants.id, { onDelete: "cascade" }),
 });
 
 export const productRelations = relations(products, ({ many }) => ({
-  productVariants: many(productVariants, {
-    relationName: "productVariants",
-  }),
+  productVariants: many(productVariants),
 }));
 
 export const productVariantsRelations = relations(
@@ -154,10 +152,9 @@ export const productVariantsRelations = relations(
     product: one(products, {
       fields: [productVariants.productId],
       references: [products.id],
-      relationName: "product",
     }),
-    variantImages: many(variantImages, { relationName: "variantImages" }),
-    variantTags: many(variantTags, { relationName: "variantTags" }),
+    variantImages: many(variantImages),
+    variantTags: many(variantTags),
   })
 );
 
@@ -165,7 +162,6 @@ export const variantImagesRelations = relations(variantImages, ({ one })=> ({
   productVariant: one(productVariants, {
     fields: [variantImages.variantId],
     references: [productVariants.id],
-    relationName: "productVariant",
   })
 }))
 
@@ -175,6 +171,5 @@ export const variantTagsRelations = relations(variantTags, ({ one })=> ({
   : one(productVariants, {
     fields: [variantTags.variantId],
     references: [productVariants.id],
-    relationName: "productVariant",
   })
 }))

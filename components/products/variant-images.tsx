@@ -114,7 +114,7 @@ const VariantImages = () => {
 
                       if (uploaded) {
                         update(index, {
-                          url: uploaded.url,
+                          url: uploaded.ufsUrl,
                           name: uploaded.name,
                           size: uploaded.size,
                           key: uploaded.key,
