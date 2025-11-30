@@ -58,26 +58,63 @@ const variantDialog = ({
   });
 
   const { execute, status, result } = useAction(createVariant, {
-      
     onSuccess: ({ data }) => {
-      setOpen(false)
-        if (data?.error) {
-          toast.error(data?.error);
-          form.reset();
-        }
-        if (data?.success) {
-          toast.success(data?.success);
-        }
-        
-      },
-    });
+      setOpen(false);
+      if (data?.error) {
+        toast.error(data?.error);
+        form.reset();
+      }
+      if (data?.success) {
+        toast.success(data?.success);
+      }
+    },
+  });
 
   function onSubmit(values: z.infer<typeof VariantSchema>) {
     console.log(values);
-    const { color, tags, variantImage, productType, productId, id, editMode } = values;
-    execute({ color, tags, variantImage, productType, productId, id, editMode });
+    const { color, tags, variantImage, productType, productId, id, editMode } =
+      values;
+    execute({
+      color,
+      tags,
+      variantImage,
+      productType,
+      productId,
+      id,
+      editMode,
+    });
   }
 
+  const getOldData = () => {
+    if (!editMode) {
+      form.reset()
+    }
+    if (editMode && variant) {
+      form.setValue("editMode", true);
+      form.setValue("id", variant.id);
+      form.setValue("color", variant.color);
+      form.setValue(
+        "tags",
+        variant.variantTags.map((t) => t.tag)
+      );
+      form.setValue(
+        "variantImage",
+        variant.variantImages.map((img) => {
+          return {
+            url: img.image_url,
+            size: Number(img.size),
+            name: img.name,
+          };
+        })
+      );
+      form.setValue("productType", variant.productType);
+      form.setValue("productId", variant.productId);
+    }
+  };
+
+  useEffect(() => {
+    getOldData();
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -134,7 +171,11 @@ const variantDialog = ({
               )}
             />
             <VariantImages />
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={status === "executing" || !form.formState.isValid}
+            >
               {editMode ? "Update Product's Variant" : "Create New Variant"}
             </Button>
           </form>
