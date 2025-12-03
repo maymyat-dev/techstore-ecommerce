@@ -28,7 +28,9 @@ import TagsInput from "./tags-input";
 import VariantImages from "./variant-images";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
-import { createVariant } from "@/server/actions/variants";
+import { createVariant, deleteVariant } from "@/server/actions/variants";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 type VariantDialogProps = {
   children: React.ReactNode;
@@ -37,17 +39,18 @@ type VariantDialogProps = {
   variant?: VariantsWithImageTags;
 };
 
-const variantDialog = ({
+const VariantDialog = ({
   children,
   editMode,
   productId,
   variant,
 }: VariantDialogProps) => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const form = useForm<z.infer<typeof VariantSchema>>({
     resolver: zodResolver(VariantSchema),
     defaultValues: {
-      tags: [],
+      tags: ["iPhone", "MacBook", "iPad", "AirPods", "Apple Watch", "Accessories", "Charger", "Cables", "Covers"],
       variantImage: [],
       color: "#000",
       productId,
@@ -59,6 +62,7 @@ const variantDialog = ({
 
   const { execute, status, result } = useAction(createVariant, {
     onSuccess: ({ data }) => {
+    
       setOpen(false);
       if (data?.error) {
         toast.error(data?.error);
@@ -67,6 +71,25 @@ const variantDialog = ({
       if (data?.success) {
         toast.success(data?.success);
       }
+    },
+  });
+
+  const variantDelete = useAction(deleteVariant, {
+    
+    onSuccess: ({ data }) => {
+      console.log("DELETE SUCCESS DATA =>", data);
+      
+      if (data.error) {
+        toast.error(data.error);
+        form.reset();
+        setOpen(false);
+        return;
+      }
+     if (data.success) {
+    toast.success(data.success as string);
+}
+      setOpen(false);
+      router.refresh();
     },
   });
 
@@ -87,7 +110,7 @@ const variantDialog = ({
 
   const getOldData = () => {
     if (!editMode) {
-      form.reset()
+      form.reset();
     }
     if (editMode && variant) {
       form.setValue("editMode", true);
@@ -171,13 +194,29 @@ const variantDialog = ({
               )}
             />
             <VariantImages />
-            <Button
-              type="submit"
-              className="w-full cursor-pointer"
-              disabled={status === "executing" || !form.formState.isValid}
-            >
-              {editMode ? "Update Product's Variant" : "Create New Variant"}
-            </Button>
+            <div className={cn(editMode ? "flex gap-2" : "")}>
+              {editMode && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="flex-1 cursor-pointer"
+                  disabled={variantDelete.status === "executing"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    variantDelete.execute({ id: variant?.id! });
+                  }}
+                >
+                  Delete Product's Variant
+                </Button>
+              )}
+              <Button
+                type="submit"
+                className={cn(editMode ? "flex-1 cursor-pointer" : "w-full cursor-pointer")}
+                disabled={status === "executing" || !form.formState.isValid}
+              >
+                {editMode ? "Update Product's Variant" : "Create New Variant"}
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>
@@ -185,4 +224,4 @@ const variantDialog = ({
   );
 };
 
-export default variantDialog;
+export default VariantDialog;

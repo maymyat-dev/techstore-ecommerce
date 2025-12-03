@@ -11,6 +11,7 @@ import {
   variantTags,
 } from "../schema";
 import { revalidatePath } from "next/cache";
+import z from "zod";
 
 export const createVariant = actionClient
   .schema(VariantSchema)
@@ -139,3 +140,17 @@ export const createVariant = actionClient
       }
     }
   );
+
+export const deleteVariant = actionClient
+  .schema(z.object({ id: z.number() }))
+  .action(async ({ parsedInput: { id } }) => {
+    try {
+      await db.delete(productVariants).where(eq(productVariants.id, id));
+      // revalidatePath("/dashboard/products");
+
+      return { success: "Variant deleted successfully" };
+    } catch (error) {
+      console.log(error);
+      return { error: "Something went wrong" };
+    }
+  });
