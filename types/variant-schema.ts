@@ -8,10 +8,8 @@ export const VariantSchema = z.object({
     message: "Color must be at least 3 characters long",
   }),
   tags: z.array(z.string().min(3, {
-    message: "Tag must be at least 3 characters long",
-  })).min(1, {
     message: "At least one tag is required",
-  }),
+  })),
   productType: z.string().min(3, {
     message: "Product type must be at least 3 characters long",
   }),

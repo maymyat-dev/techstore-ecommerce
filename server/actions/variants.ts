@@ -98,25 +98,6 @@ export const createVariant = actionClient
           const product = await db.query.products.findFirst({
             where: eq(products.id, productId),
           });
-          await db.insert(variantTags).values(
-            tags.map((tag) => {
-              return {
-                tag,
-                variantId: variant[0].id,
-              };
-            })
-          );
-          await db.insert(variantImages).values(
-            vImgs.map((img, index) => {
-              return {
-                image_url: img.url,
-                name: img.name,
-                size: img.size.toString(),
-                order: index,
-                variantId: variant[0].id,
-              };
-            })
-          );
 
           if (vImgs && vImgs.length > 0) {
             await db.insert(variantImages).values(
