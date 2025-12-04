@@ -55,7 +55,10 @@ const VariantImages = () => {
                   "ut-allowed-content:text-primary",
                   "ut-label:text-primary",
                   "ut-upload-icon:text-primary/60",
-                  "ut-button:bg-primary"
+                  "ut-button:bg-primary",
+                  "ut-uploading:bg-primary/20",
+                  "ut-loading:bg-primary/20",
+                  "ut-progress:bg-primary"
                 )}
                 onBeforeUploadBegin={(files) => {
                   const currentCount = getValues("variantImage").length;

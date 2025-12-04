@@ -1,10 +1,23 @@
 
-import AppNav from "@/components/ui/navigation/app-nav";
+import Products from "@/components/products";
+import { db } from "@/server";
 
-export default function Home() {
+export default async function Home() {
+  const products = await db.query.productVariants.findMany({
+    with: {
+      variantImages: true,
+      variantTags: true,
+      product: true
+    },
+    orderBy: (products, {desc}) => [
+      desc(products.id)
+    ],
+    limit: 10
+  })
+  
   return (
-    <div>
-      Home Page
-    </div>
+    <main>
+      <Products productWithVariants={products}/>
+    </main>
   );
 }

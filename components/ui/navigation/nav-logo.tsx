@@ -1,12 +1,12 @@
-import { ShoppingCart } from 'lucide-react'
+import { AppleIcon, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
 const NavLogo = () => {
   return (
       <Link href={'/'} className='flex items-center'>
-          <ShoppingCart className='mr-2' size={20} />
-          <span className='font-bold text-lg'>TechStore</span>
+          <AppleIcon className='mr-2' size={30} fill="black" />
+          <span className='font-bold text-lg text-neutral-900'>TechStore</span>
         </Link>
   )
 }
