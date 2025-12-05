@@ -12,7 +12,6 @@ export default async function Home() {
     orderBy: (products, {desc}) => [
       desc(products.id)
     ],
-    limit: 10
   })
   
   return (

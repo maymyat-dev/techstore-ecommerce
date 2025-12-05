@@ -1,14 +1,15 @@
+import ImageSlider from "@/components/products/image-slider";
 import VariantPicker from "@/components/products/variant-picker";
+import { Button } from "@/components/ui/button";
 import formatCurrency from "@/lib/formatCurrency";
 import { db } from "@/server";
 import { productVariants } from "@/server/schema";
 import { eq } from "drizzle-orm";
+import { ShoppingBasket } from "lucide-react";
 import React from "react";
 
 type ProductDetailsPageProps = {
-  params: {
-    id: number;
-  };
+  params: { id: number };
 };
 
 export async function generateStaticParams() {
@@ -19,14 +20,10 @@ export async function generateStaticParams() {
       variantTags: true,
     },
   });
-  if (data) {
-    const idArr = data.map((product) => ({
-      id: product.id.toString(),
-    }));
-    return idArr;
-  }
-  return {};
+
+  return data?.map((item) => ({ id: item.id.toString() })) ?? [];
 }
+
 const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
   const productWithVariants = await db.query.productVariants.findFirst({
     where: eq(productVariants.id, params.id),
@@ -43,50 +40,65 @@ const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
       },
     },
   });
+
+  if (!productWithVariants) return null;
+
+  const { product } = productWithVariants;
+
   return (
-    <>
-      {productWithVariants && (
-        <main>
-          <div></div>
-          <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 truncate">
-              {productWithVariants.product.title}
-            </h2>
+    <main className="md:flex gap-10 justify-between">
 
-            <div
-              className="prose prose-neutral max-w-none text-neutral-700"
-              dangerouslySetInnerHTML={{
-                __html: productWithVariants.product.description,
-              }}
-            />
+      <div className="md:flex-1">
+        <ImageSlider variants={product.productVariants} />
+      </div>
 
-            <p className="text-sm text-neutral-600">
-              {productWithVariants.productType}
-            </p>
+ 
+      <div className="md:flex-1 space-y-6 mt-6 md:mt-0">
 
-            <p className="text-2xl font-semibold text-neutral-800">
-              {formatCurrency(productWithVariants.product.price)}
-            </p>
+   
+        <h1 className="text-3xl font-semibol">
+          {product.title}
+        </h1>
 
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-neutral-700">Colors</p>
-              <div className="flex flex-wrap gap-3">
-                {productWithVariants.product.productVariants.map((v) => (
-                  <VariantPicker
-                    key={v.id}
-                    {...v}
-                    title={productWithVariants.product.title}
-                    price={productWithVariants.product.price}
-                    image={v.variantImages[0]?.image_url}
-                    productId={v.productId}
-                  />
-                ))}
-              </div>
-            </div>
+
+        <div
+          className="prose prose-neutral max-w-none"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        />
+
+
+        <div className="font-bold">
+          Color: <span>{productWithVariants.productType}</span>
+        </div>
+
+ 
+        <div className="space-y-2">
+          <div className="flex flex-wrap gap-4">
+            {product.productVariants.map((v) => (
+              <VariantPicker
+                key={v.id}
+                {...v}
+                title={product.title}
+                price={product.price}
+                image={v.variantImages?.[0]?.image_url}
+                productId={v.productId}
+              />
+            ))}
           </div>
-        </main>
-      )}
-    </>
+        </div>
+
+
+        <p className="text-3xl font-semibold">
+          {formatCurrency(product.price)}
+        </p>
+
+
+        <Button className="w-full">
+          <ShoppingBasket className="mr-2" /> Add to Cart
+        </Button>
+
+      </div>
+    </main>
   );
 };
 

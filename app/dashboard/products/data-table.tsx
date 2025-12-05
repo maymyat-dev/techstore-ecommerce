@@ -26,8 +26,8 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import {
   Card,
@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger  asChild>
             <Button
               variant="outline"
               className="flex items-center gap-1 rounded-lg"

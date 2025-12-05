@@ -45,8 +45,8 @@ const variantPicker = ({
             className={cn(
               "w-8 h-8 rounded-full cursor-pointer",
               selectedVariantColor === productType
-                ? "opacity-100"
-                : "opacity-50"
+                ? "ring-2 ring-primary ring-offset-2 scale-110"
+                : "opacity-90 border border-gray-200"
             )}
           ></div>
         </TooltipTrigger>
