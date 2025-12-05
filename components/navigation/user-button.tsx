@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "../button";
+import { Button } from "../ui/button";
 import { Session } from "next-auth";
 import { LogIn, LogOut, Settings, Truck } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -26,7 +26,8 @@ const UserButton = ({ user }: UserButtonProps) => {
   const router = useRouter();
   return (
     <div className="flex items-center">
-      {user?.email && (
+      <div className="hidden md:block">
+        {user?.email && (
         <span className="mr-3 text-sm text-muted-foreground">
           👋 Welcome,{" "}
           <span className="font-semibold text-foreground">
@@ -34,6 +35,7 @@ const UserButton = ({ user }: UserButtonProps) => {
           </span>
         </span>
       )}
+      </div>
 
       {user?.email ? (
         <DropdownMenu modal={false}>

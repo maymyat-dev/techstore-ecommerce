@@ -13,7 +13,7 @@ const Products = ({ productWithVariants }: ProductsProps) => {
   const PLACEHOLDER_IMAGE = "/images/placeholder-product.png"; 
 
   return (
-    <main className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <main className="grid grid-cols-2 lg:grid-cols-3  gap-4">
       {productWithVariants.map((p) => {
         
         const imageUrl = p.variantImages[0]?.image_url ?? PLACEHOLDER_IMAGE;
@@ -22,7 +22,7 @@ const Products = ({ productWithVariants }: ProductsProps) => {
          
           <Link 
             key={p.id} 
-            className="bg-white rounded-sm p-4 block hover:shadow-lg transition-shadow duration-200"
+            className="bg-white dark:bg-gray-800 rounded-sm p-4 block hover:shadow-lg transition-shadow duration-200"
             href={{ 
               pathname: `/products/${p.id}`,
               query: {
@@ -45,11 +45,11 @@ const Products = ({ productWithVariants }: ProductsProps) => {
             />
             
             <div className="border-t pt-2 mt-2">
-              <h3 className="text-sm font-medium text-neutral-900 truncate">
+              <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
                 {p.product.title}
               </h3>
 
-              <p className="text-sm text-neutral-600 font-semibold">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 font-semibold">
                 {formatCurrency(p.product.price)}
               </p>
             </div>

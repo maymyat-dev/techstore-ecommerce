@@ -1,3 +1,4 @@
+import AddToCart from "@/components/cart/add-to-cart";
 import ImageSlider from "@/components/products/image-slider";
 import VariantPicker from "@/components/products/variant-picker";
 import { Button } from "@/components/ui/button";
@@ -88,14 +89,12 @@ const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
         </div>
 
 
-        <p className="text-3xl font-semibold">
+        <p className="sm:text-3xl text-xl font-semibold">
           {formatCurrency(product.price)}
         </p>
 
 
-        <Button className="w-full">
-          <ShoppingBasket className="mr-2" /> Add to Cart
-        </Button>
+        <AddToCart maxQuantity={10} />
 
       </div>
     </main>

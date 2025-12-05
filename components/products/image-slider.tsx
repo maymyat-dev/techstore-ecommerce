@@ -16,6 +16,8 @@ type ImageSliderProps = {
   variants: VariantsWithImageTags[];
 };
 
+
+
 const ImageSlider = ({ variants }: ImageSliderProps) => {
   const [api, setApi] = useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = useState<number[]>([0]);
@@ -26,6 +28,8 @@ const ImageSlider = ({ variants }: ImageSliderProps) => {
   const updateSlider = (index: number) => {
     api?.scrollTo(index);
   };
+
+  
 
   useEffect(() => {
     if (!api) return;

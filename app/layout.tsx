@@ -4,7 +4,7 @@ import { GeistSans } from "geist/font/sans";
 
 import { Toaster } from "sonner";
 import "./globals.css";
-import AppNav from "@/components/ui/navigation/app-nav";
+import AppNav from "@/components/navigation/app-nav";
 
 export const metadata: Metadata = {
   title: "E-commerce",

@@ -6,7 +6,7 @@ const NavLogo = () => {
   return (
       <Link href={'/'} className='flex items-center'>
           <AppleIcon className='mr-2' size={30} fill="black" />
-          <span className='font-bold text-lg text-neutral-900'>TechStore</span>
+          <span className='font-bold text-lg text-neutral-900 dark:text-white'>TechStore</span>
         </Link>
   )
 }
