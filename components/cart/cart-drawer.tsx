@@ -8,27 +8,28 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Button } from "../ui/button"
+import CartShoppingItem from "./cart-shopping-item"
 
 type CartDrawerProps = {
     children: React.ReactNode,
 
 }
-const CartDrawer = ({children}: CartDrawerProps) => {
+const CartDrawer = ({ children }: CartDrawerProps) => {
+
   return (
     <Drawer>
   <DrawerTrigger>{children}</DrawerTrigger>
   <DrawerContent>
     <DrawerHeader>
       <DrawerTitle>Your cart</DrawerTitle>
-      <DrawerDescription> </DrawerDescription>
+      <DrawerDescription> <CartShoppingItem/> </DrawerDescription>
     </DrawerHeader>
-    <DrawerFooter>
+    {/* <DrawerFooter>
       <Button>Submit</Button>
       <DrawerClose>
         <Button variant="outline">Cancel</Button>
       </DrawerClose>
-    </DrawerFooter>
+    </DrawerFooter> */}
   </DrawerContent>
 </Drawer>
   )

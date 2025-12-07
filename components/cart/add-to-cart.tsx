@@ -2,13 +2,40 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Minus, Plus } from "lucide-react";
+import { redirect, useSearchParams } from "next/navigation";
+import { useCartStore } from "@/store/cart-store";
 
 type AddToCartProps = {
   maxQuantity: number;
 };
 
 const AddToCart = ({ maxQuantity }: AddToCartProps) => {
+  const addToCart = useCartStore((state) => state.addToCart);
   const [quantity, setQuantity] = useState(1);
+  const searchParams = useSearchParams();
+  const variantId = Number(searchParams.get("vid"));
+  const productId = Number(searchParams.get("productId"));
+  const title = searchParams.get("title");
+  const price = Number(searchParams.get("price"));
+  const image = searchParams.get("image");
+
+  if(!variantId || !productId || !title || !price || !image){
+    return redirect("/")
+  }
+
+  const addToCartHandler = () => {
+    addToCart({
+      id: productId,
+      image,
+      name: title,
+      price,
+      variant: {
+        variantId: variantId,
+        quantity
+      }
+      
+    })
+  };
 
   function decreaseQuantity() {
     if (quantity > 1) {
@@ -49,7 +76,7 @@ const AddToCart = ({ maxQuantity }: AddToCartProps) => {
         </Button>
       </div>
 
-      <Button className="w-full bg-primary h-12 text-base font-semibold">
+      <Button className="w-full bg-primary h-12 text-base font-semibold" onClick={addToCartHandler}>
         Add to Cart
       </Button>
     </>

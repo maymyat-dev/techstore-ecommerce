@@ -26,7 +26,8 @@ const Products = ({ productWithVariants }: ProductsProps) => {
             href={{ 
               pathname: `/products/${p.id}`,
               query: {
-                productId: p.product.id,
+                vid: p.id,
+                productId: p.productId,
                 type: p.productType,
                 image: imageUrl, 
                 title: p.product.title,
