@@ -23,6 +23,7 @@ const CartShoppingItem = () => {
   const cart = useCartStore((state) => state.cart);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const addToCart = useCartStore((state) => state.addToCart);
+  const setCartPosition = useCartStore((state) => state.setCartPosition);
 
   return (
     <main className="max-w-4xl mx-auto">
@@ -32,100 +33,101 @@ const CartShoppingItem = () => {
           <p className="mt-4 text-gray-600">Your cart is empty</p>
         </div>
       ) : (
-          <>
-           <ScrollArea className="max-h-80 overflow-y-auto">
-          <Table>
+        <>
+          <ScrollArea className="max-h-80 overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Image</TableHead>
+                  <TableHead className="text-center">Quantity</TableHead>
+                  <TableHead className="text-right">Price</TableHead>
+                </TableRow>
+              </TableHeader>
 
-            <TableHeader>
-              <TableRow>
-                <TableHead>Product</TableHead>
-                <TableHead>Image</TableHead>
-                <TableHead className="text-center">Quantity</TableHead>
-                <TableHead className="text-right">Price</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            
               <TableBody>
-              {cart.map((cItem, index) => (
-                <TableRow key={`${cItem.id}-${index}`}>
-                  <TableCell className="font-medium text-left">
-                    {cItem.name}
-                  </TableCell>
+                {cart.map((cItem, index) => (
+                  <TableRow key={`${cItem.id}-${index}`}>
+                    <TableCell className="font-medium text-left">
+                      {cItem.name}
+                    </TableCell>
 
-                  <TableCell className="py-4">
-                    <Image
-                      src={cItem.image}
-                      alt={cItem.name}
-                      width={50}
-                      height={50}
-                      className="rounded-md border border-gray-200"
-                    />
-                  </TableCell>
+                    <TableCell className="py-4">
+                      <Image
+                        src={cItem.image}
+                        alt={cItem.name}
+                        width={50}
+                        height={50}
+                        className="rounded-md border border-gray-200"
+                      />
+                    </TableCell>
 
-                  <TableCell className="py-4">
-                    <div className="flex justify-center gap-4">
-                      <Button
-                        className="
+                    <TableCell className="py-4">
+                      <div className="flex justify-center gap-4">
+                        <Button
+                          className="
                           quantity-control-btn hover:opacity-50
                           transition"
-                        onClick={() =>
-                          removeFromCart({
-                            ...cItem,
-                            variant: {
-                              variantId: cItem.variant.variantId,
-                              quantity: 1,
-                            },
-                          })
-                        }
-                      >
-                        <MinusIcon size={18} />
-                      </Button>
-                      {cItem.variant.quantity}
-                      <Button
-                        className="
+                          onClick={() =>
+                            removeFromCart({
+                              ...cItem,
+                              variant: {
+                                variantId: cItem.variant.variantId,
+                                quantity: 1,
+                              },
+                            })
+                          }
+                        >
+                          <MinusIcon size={18} />
+                        </Button>
+                        {cItem.variant.quantity}
+                        <Button
+                          className="
                           quantity-control-btn hover:opacity-50 
                           transition"
-                        onClick={() =>
-                          addToCart({
-                            ...cItem,
-                            variant: {
-                              variantId: cItem.variant.variantId,
-                              quantity: 1,
-                            },
-                          })
-                        }
-                      >
-                        <PlusIcon size={18} />
-                      </Button>
-                    </div>
-                  </TableCell>
+                          onClick={() =>
+                            addToCart({
+                              ...cItem,
+                              variant: {
+                                variantId: cItem.variant.variantId,
+                                quantity: 1,
+                              },
+                            })
+                          }
+                        >
+                          <PlusIcon size={18} />
+                        </Button>
+                      </div>
+                    </TableCell>
 
-                  <TableCell className="py-4 text-right">
-                    {formatCurrency(cItem.price)}
+                    <TableCell className="py-4 text-right">
+                      {formatCurrency(cItem.price)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={3} className="font-medium text-right">
+                    Total
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-black dark:text-white">
+                    {formatCurrency(totalPriceCalc(cart))}
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={3} className="font-medium text-right">
-                  Total
-                </TableCell>
-                <TableCell className="text-right font-bold text-black dark:text-white">
-                  {formatCurrency(totalPriceCalc(cart))}
-                </TableCell>
-              </TableRow>
-            </TableFooter>
+              </TableFooter>
             </Table>
-            <ScrollBar orientation="horizontal" /> 
-      <ScrollBar orientation="vertical" /> 
+            <ScrollBar orientation="horizontal" />
+            <ScrollBar orientation="vertical" />
           </ScrollArea>
-            <div className="flex justify-end mt-6">
-        <Button>Continue to checkout</Button>
-      </div></>
+          <div
+            className="flex justify-end mt-6"
+            onClick={() => setCartPosition("Checkout")}
+          >
+            <Button>Continue to checkout</Button>
+          </div>
+        </>
       )}
-    
     </main>
   );
 };

@@ -20,11 +20,15 @@ export type CartType = {
     addToCart: (item: CartItem) => void
     removeFromCart: (item: CartItem) => void
     clearCart: () => void;
+    cartPosition: "Order" | "Checkout" | "Success";
+    setCartPosition: (position: "Order" | "Checkout" | "Success") => void
 }
 
 export const useCartStore = create<CartType>()(
     persist((set) => ({
-    cart: [],
+        cart: [],
+        cartPosition: "Order",
+        setCartPosition: (position) => set({ cartPosition: position }),
     addToCart: (item) => set((state) => {
         const existingItem = state.cart.find((cartItem) => cartItem.variant.variantId === item.variant.variantId)
         
