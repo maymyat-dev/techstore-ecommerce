@@ -118,6 +118,8 @@ const CartShoppingItem = () => {
               </TableRow>
             </TableFooter>
             </Table>
+            <ScrollBar orientation="horizontal" /> 
+      <ScrollBar orientation="vertical" /> 
             </ScrollArea>
       )}
       <div className="flex justify-end mt-6">
