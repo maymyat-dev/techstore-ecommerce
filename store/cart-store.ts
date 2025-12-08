@@ -19,9 +19,11 @@ export type CartType = {
     cart: CartItem[],
     addToCart: (item: CartItem) => void
     removeFromCart: (item: CartItem) => void
+    clearCart: () => void;
 }
 
-export const useCartStore = create(persist<CartType>((set) => ({
+export const useCartStore = create<CartType>()(
+    persist((set) => ({
     cart: [],
     addToCart: (item) => set((state) => {
         const existingItem = state.cart.find((cartItem) => cartItem.variant.variantId === item.variant.variantId)
@@ -68,7 +70,8 @@ export const useCartStore = create(persist<CartType>((set) => ({
         return {
             cart: updatedCart.filter((CartItem) => CartItem.variant.quantity > 0)
         }
-    })
+    }),
+    clearCart: () => set({ cart: [] }),
 }), {
-    name: "shopping-cart-store"
+    name: "shopping-cart-store",
 }))

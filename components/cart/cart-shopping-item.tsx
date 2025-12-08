@@ -32,9 +32,9 @@ const CartShoppingItem = () => {
           <p className="mt-4 text-gray-600">Your cart is empty</p>
         </div>
       ) : (
-          <ScrollArea className="max-h-80 overflow-y-auto">
+          <>
+           <ScrollArea className="max-h-80 overflow-y-auto">
           <Table>
-            {/* <TableCaption>A list of your cart.</TableCaption> */}
 
             <TableHeader>
               <TableRow>
@@ -47,8 +47,8 @@ const CartShoppingItem = () => {
 
             
               <TableBody>
-              {cart.map((cItem) => (
-                <TableRow key={cItem.id}>
+              {cart.map((cItem, index) => (
+                <TableRow key={`${cItem.id}-${index}`}>
                   <TableCell className="font-medium text-left">
                     {cItem.name}
                   </TableCell>
@@ -120,11 +120,12 @@ const CartShoppingItem = () => {
             </Table>
             <ScrollBar orientation="horizontal" /> 
       <ScrollBar orientation="vertical" /> 
-            </ScrollArea>
-      )}
-      <div className="flex justify-end mt-6">
+          </ScrollArea>
+            <div className="flex justify-end mt-6">
         <Button>Continue to checkout</Button>
-      </div>
+      </div></>
+      )}
+    
     </main>
   );
 };
