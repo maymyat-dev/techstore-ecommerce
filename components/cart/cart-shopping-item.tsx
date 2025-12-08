@@ -6,6 +6,7 @@ import {
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -13,9 +14,15 @@ import {
 import formatCurrency from "@/lib/formatCurrency";
 import Image from "next/image";
 import EmptyCartImg from "@/public/images/empty-cart.png";
+import { Button } from "../ui/button";
+import { MinusIcon, PlusIcon } from "lucide-react";
+import { totalPriceCalc } from "@/lib/total-price";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const CartShoppingItem = () => {
   const cart = useCartStore((state) => state.cart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const addToCart = useCartStore((state) => state.addToCart);
 
   return (
     <main className="max-w-4xl mx-auto">
@@ -25,43 +32,97 @@ const CartShoppingItem = () => {
           <p className="mt-4 text-gray-600">Your cart is empty</p>
         </div>
       ) : (
-        <Table>
-          <TableCaption>A list of your cart.</TableCaption>
+          <ScrollArea className="max-h-80 overflow-y-auto">
+          <Table>
+            {/* <TableCaption>A list of your cart.</TableCaption> */}
 
-          <TableHeader>
-            <TableRow>
-              <TableHead>Product</TableHead>
-              <TableHead>Image</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead className="text-right">Price</TableHead>
-            </TableRow>
-          </TableHeader>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Product</TableHead>
+                <TableHead>Image</TableHead>
+                <TableHead className="text-center">Quantity</TableHead>
+                <TableHead className="text-right">Price</TableHead>
+              </TableRow>
+            </TableHeader>
 
-          <TableBody>
-            {cart.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-medium text-left">{item.name}</TableCell>
+            
+              <TableBody>
+              {cart.map((cItem) => (
+                <TableRow key={cItem.id}>
+                  <TableCell className="font-medium text-left">
+                    {cItem.name}
+                  </TableCell>
 
-                <TableCell>
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={50}
-                    height={50}
-                    className="rounded-md"
-                  />
+                  <TableCell className="py-4">
+                    <Image
+                      src={cItem.image}
+                      alt={cItem.name}
+                      width={50}
+                      height={50}
+                      className="rounded-md border border-gray-200"
+                    />
+                  </TableCell>
+
+                  <TableCell className="py-4">
+                    <div className="flex justify-center gap-4">
+                      <Button
+                        className="
+                          quantity-control-btn hover:opacity-50
+                          transition"
+                        onClick={() =>
+                          removeFromCart({
+                            ...cItem,
+                            variant: {
+                              variantId: cItem.variant.variantId,
+                              quantity: 1,
+                            },
+                          })
+                        }
+                      >
+                        <MinusIcon size={18} />
+                      </Button>
+                      {cItem.variant.quantity}
+                      <Button
+                        className="
+                          quantity-control-btn hover:opacity-50 
+                          transition"
+                        onClick={() =>
+                          addToCart({
+                            ...cItem,
+                            variant: {
+                              variantId: cItem.variant.variantId,
+                              quantity: 1,
+                            },
+                          })
+                        }
+                      >
+                        <PlusIcon size={18} />
+                      </Button>
+                    </div>
+                  </TableCell>
+
+                  <TableCell className="py-4 text-right">
+                    {formatCurrency(cItem.price)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={3} className="font-medium text-right">
+                  Total
                 </TableCell>
-
-                <TableCell>{item.variant.quantity}</TableCell>
-
-                <TableCell className="text-right">
-                  ${formatCurrency(item.price)}
+                <TableCell className="text-right font-bold text-black dark:text-white">
+                  {formatCurrency(totalPriceCalc(cart))}
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableFooter>
+            </Table>
+            </ScrollArea>
       )}
+      <div className="flex justify-end mt-6">
+        <Button>Continue to checkout</Button>
+      </div>
     </main>
   );
 };

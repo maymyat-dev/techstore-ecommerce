@@ -125,3 +125,9 @@
     overflow-y: scroll;
   }
 }
+
+@layer components {
+  .quantity-control-btn {
+    @apply h-8 w-8 rounded-full cursor-pointer border transition;
+  }
+}
