@@ -58,7 +58,7 @@ const ImageSlider = ({ variants }: ImageSliderProps) => {
                     width={400}
                     height={400}
                     priority
-                    className="w-[260px] h-[260px] md:w-[320px] md:h-[320px] object-contain rounded-xl"
+                    className="w-[260px] h-[260px] md:w-[500px] md:h-[500px] object-contain rounded-xl"
                   />
                 )}
               </CarouselItem>
