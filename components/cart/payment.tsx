@@ -4,13 +4,17 @@ import { totalPriceCalc } from '@/lib/total-price';
 import { useCartStore } from '@/store/cart-store'
 import { Elements } from '@stripe/react-stripe-js'
 import PaymentForm from './payment-form';
+import { useEffect } from 'react';
 
 const stripe = stripeInit();
 
 const Payment = () => {
     const cart = useCartStore((state) => state.cart);
 
-    
+     const setCartPosition = useCartStore((state) => state.setCartPosition);
+        useEffect(()=> {
+            if(cart.length === 0) setCartPosition("Order")
+        }, [])
 
   return (
       <div className='max-w-4xl mx-auto'>

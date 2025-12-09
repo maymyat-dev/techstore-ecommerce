@@ -12,6 +12,7 @@ import CartShoppingItem from "./cart-shopping-item"
 import CartStatus from "./cart-status"
 import { useCartStore } from "@/store/cart-store"
 import Payment from "./payment"
+import Success from "./success"
 
 
 type CartDrawerProps = {
@@ -34,6 +35,9 @@ const cartPosition = useCartStore((state) => state.cartPosition)
         }
         {
           cartPosition === "Checkout" && <DrawerDescription><Payment/></DrawerDescription>
+        }
+        {
+          cartPosition === "Success" && <DrawerDescription><Success/></DrawerDescription>
         }
     {/* <DrawerFooter>
       <Button>Submit</Button>
