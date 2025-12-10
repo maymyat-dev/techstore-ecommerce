@@ -15,7 +15,7 @@ import formatCurrency from "@/lib/formatCurrency";
 import Image from "next/image";
 import EmptyCartImg from "@/public/images/empty-cart.png";
 import { Button } from "../ui/button";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { DeleteIcon, MinusIcon, PlusIcon, Trash, Trash2 } from "lucide-react";
 import { totalPriceCalc } from "@/lib/total-price";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -24,6 +24,7 @@ const CartShoppingItem = () => {
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const addToCart = useCartStore((state) => state.addToCart);
   const setCartPosition = useCartStore((state) => state.setCartPosition);
+  const clearCart = useCartStore((state) => state.clearCart);
 
   return (
     <main className="max-w-4xl mx-auto">
@@ -68,6 +69,7 @@ const CartShoppingItem = () => {
                           className="
                           quantity-control-btn hover:opacity-50
                           transition"
+                          disabled={cItem.variant.quantity === 1}
                           onClick={() =>
                             removeFromCart({
                               ...cItem,
@@ -85,6 +87,7 @@ const CartShoppingItem = () => {
                           className="
                           quantity-control-btn hover:opacity-50 
                           transition"
+                          disabled={cItem.variant.quantity === 10}
                           onClick={() =>
                             addToCart({
                               ...cItem,
@@ -101,7 +104,10 @@ const CartShoppingItem = () => {
                     </TableCell>
 
                     <TableCell className="py-4 text-right">
-                      {formatCurrency(cItem.price)}
+                      <div className="flex items-center justify-end gap-2">
+                        {formatCurrency(cItem.price)}
+                        <Trash2 size={18} color="red" onClick={() => removeFromCart(cItem)} className="cursor-pointer" />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -111,8 +117,8 @@ const CartShoppingItem = () => {
                   <TableCell colSpan={3} className="font-medium text-right">
                     Total
                   </TableCell>
-                  <TableCell className="text-right font-bold text-black dark:text-white">
-                    {formatCurrency(totalPriceCalc(cart))}
+                  <TableCell className="text-right text-xl font-bold text-primary dark:text-white">
+                    {formatCurrency(totalPriceCalc(cart))} 
                   </TableCell>
                 </TableRow>
               </TableFooter>
@@ -124,7 +130,7 @@ const CartShoppingItem = () => {
             className="flex justify-end mt-6"
             onClick={() => setCartPosition("Checkout")}
           >
-            <Button>Continue to checkout</Button>
+            <Button className=" cursor-pointer">Continue to checkout</Button>
           </div>
         </>
       )}

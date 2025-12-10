@@ -24,7 +24,7 @@ const cartPosition = useCartStore((state) => state.cartPosition)
   return (
     <Drawer>
   <DrawerTrigger>{children}</DrawerTrigger>
-  <DrawerContent>
+  <DrawerContent className="pb-10">
     <DrawerHeader>
           <DrawerTitle>Your cart</DrawerTitle>
           <CartStatus/>
