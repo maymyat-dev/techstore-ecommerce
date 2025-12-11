@@ -15,7 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
   session: { strategy: "jwt" },
   callbacks: {
-    async session({ session, token }) {
+      async session({ session, token }) {
       if (session && token.sub) {
         session.user.id = token.sub
       }

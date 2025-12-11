@@ -35,24 +35,46 @@ import formatCurrency from "@/lib/formatCurrency";
 
 const OrdersPage = async () => {
   const session = await auth();
+  console.log("SESSION ROLE =>", session?.user.role)
   if (!session) return redirect("/");
 
-  const customerOrders = await db.query.orders.findMany({
-    where: eq(orders.userID, session.user.id),
+let customerOrders;
+
+// If Admin → Fetch ALL orders
+if (session.user.role === "admin") {
+  customerOrders = await db.query.orders.findMany({
     with: {
       orderProduct: {
         with: {
           product: true,
           productVariants: {
-            with: {
-              variantImages: true,
-            },
+            with: { variantImages: true },
           },
           order: true,
         },
       },
     },
   });
+}
+
+// If normal user → Fetch OWN orders only
+else {
+  customerOrders = await db.query.orders.findMany({
+    where: eq(orders.userID, session.user.id),
+    with: {
+      orderProduct: {
+        with: {
+          product: true,
+          productVariants: {
+            with: { variantImages: true },
+          },
+          order: true,
+        },
+      },
+    },
+  });
+}
+
 
   return (
     <Card>
@@ -84,6 +106,16 @@ const OrdersPage = async () => {
                   <TableCell>
                     {order.status === "pending" && (
                       <span className="text-yellow-500 border border-yellow-500 bg-yellow-50 rounded-full px-4 py-1">
+                        {order.status}
+                      </span>
+                    )}
+                    {order.status === "completed" && (
+                      <span className="text-green-500 border border-green-500 bg-green-50 rounded-full px-4 py-1">
+                        {order.status}
+                      </span>
+                    )}
+                    {order.status === "cancelled" && (
+                      <span className="text-red-500 border border-red-500 bg-red-50 rounded-full px-4 py-1">
                         {order.status}
                       </span>
                     )}

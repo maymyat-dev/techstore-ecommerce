@@ -23,14 +23,17 @@ export const createOrder = actionClient
         })
         .returning();
 
-      products.map(async (product) => {
-        await db.insert(orderProduct).values({
-          quantity: product.quantity,
-          productID: product.productId,
-          productVariantID: product.variantId,
-          orderID: order[0].id,
-        });
-      });
+      await Promise.all(
+        products.map((product) =>
+          db.insert(orderProduct).values({
+            quantity: product.quantity,
+            productID: product.productId,
+            productVariantID: product.variantId,
+            orderID: order[0].id,
+          })
+        )
+      );
+
       return { success: "Order created successfully" };
     }
   );
