@@ -29,7 +29,7 @@ const Products = ({ productWithVariants }: ProductsProps) => {
                 vid: p.id,
                 productId: p.productId,
                 type: p.productType,
-                image: imageUrl, 
+                // image: imageUrl, 
                 title: p.product.title,
                 price: p.product.price,
               },

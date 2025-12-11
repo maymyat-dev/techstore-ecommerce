@@ -1,4 +1,5 @@
 import AnalyticsCard from "@/components/analytics/analytics-card";
+import AnalyticsChart from "@/components/analytics/analytics-chart";
 import { analytics, weeklyAnalytics } from "@/server/actions/analytics";
 
 import {
@@ -48,7 +49,7 @@ const AnalyticsPage = async () => {
     <main>
       <h1 className="text-xl font-semibold mb-5">Dashboard Analytics</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-5">
         {stats.map((item, i) => (
           <AnalyticsCard
             key={i}
@@ -59,6 +60,7 @@ const AnalyticsPage = async () => {
           />
         ))}
       </div>
+      <AnalyticsChart chartData={weeklyAnalyticsData!} />
     </main>
   );
 };

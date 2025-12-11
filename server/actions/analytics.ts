@@ -3,7 +3,7 @@
 import { eq, between } from "drizzle-orm"
 import { db } from ".."
 import { orders, products, users } from "../schema"
-import { format, subDays } from "date-fns"
+import { endOfDay, format, startOfDay, subDays } from "date-fns"
 
 export const analytics = async () => {
     try {
@@ -32,23 +32,28 @@ export const weeklyAnalytics = async () => {
     try {
         const today = new Date();
         const days = Array.from({ length: 7 }, (_, index) => {
-          return  format(subDays(today,index), "dd-MM-yyyy");
+          return  format(subDays(today,index), "yyyy-MM-dd");
         }).reverse();
 
         const data = await Promise.all(
             days.map(async (day) => {
-                const startDay = new Date(day);
-                const endDay = new Date(day);
-                endDay.setDate(endDay.getDate() + 1);
+                const startDay = startOfDay(new Date(day));
+                const endDay = endOfDay(new Date(day));
 
-                const orderData = await db.select().from(orders).where(
+                const orderData = await db.select({
+                    count : orders.id, 
+                    
+                }).from(orders).where(
                     between(orders.created, startDay, endDay)
                 )
 
-                return orderData
+                return {
+                    day,
+                    count : orderData.length
+                }
             })
         )
-        return data;
+        return data
     }
     catch (error) {
         console.log(error)

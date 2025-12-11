@@ -35,12 +35,12 @@ import formatCurrency from "@/lib/formatCurrency";
 
 const OrdersPage = async () => {
   const session = await auth();
-  console.log("SESSION ROLE =>", session?.user.role)
+  // console.log("SESSION ROLE =>", session?.user.role)
   if (!session) return redirect("/");
 
 let customerOrders;
 
-// If Admin → Fetch ALL orders
+
 if (session.user.role === "admin") {
   customerOrders = await db.query.orders.findMany({
     with: {
@@ -57,7 +57,7 @@ if (session.user.role === "admin") {
   });
 }
 
-// If normal user → Fetch OWN orders only
+
 else {
   customerOrders = await db.query.orders.findMany({
     where: eq(orders.userID, session.user.id),
