@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={`antialiased`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppNav/>
-           <main className="max-w-7xl mx-auto px-5"> 
+           <main className="max-w-7xl mx-auto px-5 pb-10"> 
             {children}
           </main>
           <Toaster position="top-center" richColors closeButton />

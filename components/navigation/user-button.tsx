@@ -74,9 +74,9 @@ const UserButton = ({ user }: UserButtonProps) => {
 
             <DropdownMenuSeparator className="my-3" />
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild onClick={()=>router.push("/dashboard/orders")}>
               <Link
-                href="/orders"
+                href="dashboard/orders"
                 className="flex items-center gap-3 text-sm font-medium text-foreground hover:text-primary transition-all duration-200 group"
               >
                 <Truck className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all duration-300 group-hover:translate-x-1" />
