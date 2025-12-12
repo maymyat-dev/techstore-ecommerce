@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "TechStore",
   description: "Our shop has the latest modern i-devices",
   openGraph: {
-    images: ['public/images/og-image.png'],
+    images: ['/images/og-image.png'],
   }
 };
 
