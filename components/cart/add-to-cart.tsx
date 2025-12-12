@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Minus, Plus } from "lucide-react";
 import { redirect, useSearchParams } from "next/navigation";
 import { useCartStore } from "@/store/cart-store";
+import { toast } from "sonner";
 
 type AddToCartProps = {
   maxQuantity: number;
@@ -34,7 +35,11 @@ const AddToCart = ({ maxQuantity }: AddToCartProps) => {
         quantity
       }
       
-    })
+    }),
+      toast.success("Added to cart", {
+      description: `${title} x${quantity}`,
+      duration: 1500,
+    });
   };
 
   function decreaseQuantity() {
@@ -76,7 +81,7 @@ const AddToCart = ({ maxQuantity }: AddToCartProps) => {
         </Button>
       </div>
 
-      <Button className="w-full bg-primary h-12 text-base font-semibold" onClick={addToCartHandler}>
+      <Button className="w-full bg-primary h-12 text-base font-semibold hover:bg-primary/90 cursor-pointer" onClick={addToCartHandler}>
         Add to Cart
       </Button>
     </>

@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { Toaster } from "sonner";
 import "./globals.css";
 import AppNav from "@/components/navigation/app-nav";
+import { AuthProvider } from "@/components/auth-provider";
 
 export const metadata: Metadata = {
   title: "TechStore",
@@ -22,13 +23,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body className={`antialiased`} suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <AuthProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppNav/>
            <main className="max-w-7xl mx-auto px-5 pb-10"> 
             {children}
           </main>
           <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -44,12 +44,12 @@ const TagFilter = () => {
     }
   };
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2 mb-5">
+    <div className="flex flex-wrap items-center gap-2 mb-5 md:flex-1 flex-none justify-start">
       {tags.map((t) => (
         <p
           key={t.id}
           className={cn(
-            "px-2 py-1 border border-gray-300 rounded-sm cursor-pointer", 
+            "px-3 border border-gray-300 rounded-sm cursor-pointer", 
             tagParams === t.tag && "bg-primary text-white"
           )}
           onClick={() => handleTagClick(t.tag)}

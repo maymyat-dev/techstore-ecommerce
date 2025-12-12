@@ -18,8 +18,10 @@ export default async function Home() {
   
   return (
     <main>
-      <SearchBox productWithVariants={products} />
+      <div className="md:flex flex-none justify-between flex-row-reverse">
+        <SearchBox productWithVariants={products} />
       <TagFilter />
+      </div>
       <Products productWithVariants={products}/>
     </main>
   );
