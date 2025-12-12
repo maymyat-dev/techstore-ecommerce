@@ -67,7 +67,17 @@ const SearchBox = ({ productWithVariants }: SearchBoxProps) => {
             {searchResults.map((item) => (
               <li key={item.id}>
                 <Link
-                  href={`/product/${item.product.id}`}
+                   href={{
+              pathname: `/products/${item.id}`,
+              query: {
+                vid: item.id,
+                productId: item.productId,
+                type: item.productType,
+                image: item.variantImages[0].image_url,
+                title: item.product.title,
+                price: item.product.price,
+              },
+            }}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-600 transition"
                 >
                   <Image
