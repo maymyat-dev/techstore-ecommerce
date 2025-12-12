@@ -9,6 +9,9 @@ import AppNav from "@/components/navigation/app-nav";
 export const metadata: Metadata = {
   title: "MayMyatMon TechStore",
   description: "Our shop has the latest modern i-devices",
+  openGraph: {
+    images: ['/og']
+  }
 };
 
 export default function RootLayout({
