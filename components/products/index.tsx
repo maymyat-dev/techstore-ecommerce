@@ -39,7 +39,7 @@ const Products = ({ productWithVariants }: ProductsProps) => {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center opacity-80">
         <Image
-          src="/images/empty-state.png"
+          src="/images/empty-cart.png"
           alt="No Products"
           width={160}
           height={160}
