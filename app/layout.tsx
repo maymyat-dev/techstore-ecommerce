@@ -7,10 +7,10 @@ import "./globals.css";
 import AppNav from "@/components/navigation/app-nav";
 
 export const metadata: Metadata = {
-  title: "MayMyatMon TechStore",
+  title: "TechStore",
   description: "Our shop has the latest modern i-devices",
   openGraph: {
-    images: ['public/images/og-image.jpg'],
+    images: ['public/images/og-image.png'],
   }
 };
 
