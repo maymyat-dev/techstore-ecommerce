@@ -7,7 +7,7 @@ import Credentials from "next-auth/providers/credentials";
 import { loginSchema } from "@/types/login-schema";
 import { eq } from "drizzle-orm";
 import { accounts, users } from "./schema";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import Stripe from "stripe";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -76,7 +76,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if(!user.password) return null
 
-          const isMatch = await bcrypt.compare(password, user.password!);
+          const isMatch = bcrypt.compareSync(password, user.password!);
           if (isMatch) return user;
         }
 

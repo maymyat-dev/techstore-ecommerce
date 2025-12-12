@@ -3,7 +3,7 @@
 import { registerSchema } from "@/types/register-schema";
 import { actionClient } from "./safe-action";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "@/server";
 import { users } from "./../schema";
@@ -13,7 +13,7 @@ import { sendEmail } from "./emails";
 export const register = actionClient
   .inputSchema(registerSchema)
   .action(async ({ parsedInput: { name, email, password } }) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
     const existingUser = await db.query.users.findFirst({
       where: eq(users.email, email),
