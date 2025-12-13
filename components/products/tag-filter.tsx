@@ -47,15 +47,17 @@ const TagFilter = () => {
     <div className="flex flex-wrap items-center gap-2 mb-5 md:flex-1 flex-none justify-start">
       {tags.map((t) => (
         <p
-          key={t.id}
-          className={cn(
-            "px-3 border border-gray-300 rounded-sm cursor-pointer", 
-            tagParams === t.tag && "border-primary text-primary bg-primary/10"
+  className={cn(
+    "px-3 border rounded-sm cursor-pointer",
+    tagParams === t.tag &&
+      "bg-primary text-primary-foreground border-primary"
           )}
+          key={t.id}
           onClick={() => handleTagClick(t.tag)}
-        >
-          {t.name}
-        </p>
+>
+  {t.name}
+</p>
+
       ))}
     </div>
   );
