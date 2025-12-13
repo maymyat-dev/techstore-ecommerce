@@ -54,8 +54,8 @@ const TagFilter = () => {
           className={cn(
             "px-4 rounded-sm border transition-colors",
             tagParams === t.tag
-              ? "bg-primary text-primary-foreground border-primary"
-              : "border-gray-300 text-foreground hover:bg-muted"
+              ? "bg-primary text-white border-primary"
+              : "bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
           )}
         >
           {t.name}
