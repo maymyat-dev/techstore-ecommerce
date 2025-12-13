@@ -118,10 +118,11 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    line-height: 2;
+    /* line-height: 2; */
   }
   body {
     @apply bg-background text-foreground;
+    line-height: 2;
     overflow-y: scroll;
   }
 }

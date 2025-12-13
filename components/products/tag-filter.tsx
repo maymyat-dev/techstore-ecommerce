@@ -50,7 +50,7 @@ const TagFilter = () => {
           key={t.id}
           className={cn(
             "px-3 border border-gray-300 rounded-sm cursor-pointer", 
-            tagParams === t.tag && "bg-primary text-white"
+            tagParams === t.tag && "border-primary text-primary bg-primary/10"
           )}
           onClick={() => handleTagClick(t.tag)}
         >
