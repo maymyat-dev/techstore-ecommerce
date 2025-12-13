@@ -81,7 +81,7 @@ const AddToCart = ({ maxQuantity }: AddToCartProps) => {
         </Button>
       </div>
 
-      <Button className="w-full bg-primary h-12 text-base font-semibold hover:bg-primary/90 cursor-pointer" onClick={addToCartHandler}>
+      <Button className="w-full bg-primary h-12 text-base font-semibold hover:bg-primary/10 hover:border border-primary hover:text-primary cursor-pointer" onClick={addToCartHandler}>
         Add to Cart
       </Button>
     </>

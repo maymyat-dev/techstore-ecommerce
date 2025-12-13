@@ -131,3 +131,7 @@
     @apply h-8 w-8 rounded-full cursor-pointer border transition;
   }
 }
+
+.z7mZYGiW__FloatingActionButton {
+  display: none;
+}

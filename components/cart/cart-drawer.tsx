@@ -13,6 +13,7 @@ import CartStatus from "./cart-status"
 import { useCartStore } from "@/store/cart-store"
 import Payment from "./payment"
 import Success from "./success"
+import { useState } from "react"
 
 
 type CartDrawerProps = {
@@ -20,9 +21,10 @@ type CartDrawerProps = {
 
 }
 const CartDrawer = ({ children }: CartDrawerProps) => {
+  const [open, setOpen] = useState(false)
 const cartPosition = useCartStore((state) => state.cartPosition)
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={setOpen}>
   <DrawerTrigger>{children}</DrawerTrigger>
   <DrawerContent className="pb-10">
     <DrawerHeader>
@@ -34,7 +36,7 @@ const cartPosition = useCartStore((state) => state.cartPosition)
           cartPosition === "Order" && <DrawerDescription> <CartShoppingItem /> </DrawerDescription>
         }
         {
-          cartPosition === "Checkout" && <DrawerDescription><Payment/></DrawerDescription>
+          cartPosition === "Checkout" && <DrawerDescription><Payment onClose={() => setOpen(false)} /></DrawerDescription>
         }
         {
           cartPosition === "Success" && <DrawerDescription><Success/></DrawerDescription>
