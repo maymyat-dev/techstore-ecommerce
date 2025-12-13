@@ -104,7 +104,7 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
       <PaymentElement />
       <div className="flex justify-between gap-2 mt-5">
         <Button type="button" variant={"outline"} onClick={()=>setCartPosition("Order")} className="w-[100px]"> <ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
-        <Button type="button"  className="flex-1" disabled={loading || !stripe || !elements}>Pay</Button>
+        <Button type="submit"  className="flex-1" disabled={loading || !stripe || !elements}>Pay</Button>
       </div>
     </form>
   );

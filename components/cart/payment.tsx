@@ -1,48 +1,54 @@
 "use client"
-import stripeInit from '@/lib/stripe-init'
+import Script from 'next/script'
+import stripeInit from '@/lib/stripe-init' 
 import { totalPriceCalc } from '@/lib/total-price';
 import { useCartStore } from '@/store/cart-store'
 import { Elements } from '@stripe/react-stripe-js'
 import PaymentForm from './payment-form';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react'; 
 import LoginRequired from './login-required';
+import { Stripe } from '@stripe/stripe-js';
 
-const stripe = stripeInit();
-
-interface PaymentProps  {
-    onClose ?: () => void;
-}
-
-const Payment = ({onClose}: PaymentProps) => {
+const Payment = ({onClose}: {onClose?: () => void}) => {
     const { data: session, status } = useSession()
     const cart = useCartStore((state) => state.cart);
     const setCartPosition = useCartStore((state) => state.setCartPosition);
+    
+   
+    const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
 
     useEffect(() => {
         if (cart.length === 0) setCartPosition("Order")
     }, [cart.length, setCartPosition])
-    
-   
-    if (status === "loading") return <div className="flex flex-col items-center justify-center py-10 gap-2">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                <p className="text-sm text-muted-foreground">Verifying session...</p>
-            </div>
-    
- 
-    if (status === "unauthenticated" || !session) {
-        return <LoginRequired onClose={onClose} />;
-    }
 
-  if (session) {
-      return (
+    
+    const handleScriptLoad = () => {
+        setStripePromise(stripeInit());
+    };
+
+    if (status === "loading") return <div>Loading...</div>
+    if (status === "unauthenticated" || !session) return <LoginRequired onClose={onClose} />;
+
+    return (
         <div className='max-w-4xl mx-auto'>
-            <Elements key={session?.user?.email || "stripe-elements"} stripe={stripe} options={{ mode: "payment", currency: "usd", amount: totalPriceCalc(cart) }} >
-                <PaymentForm totalPrice={totalPriceCalc(cart)} />
-            </Elements>
+            <Script 
+                src="https://js.stripe.com/v3/" 
+                strategy="afterInteractive"
+                onLoad={handleScriptLoad} 
+            />
+            
+            {stripePromise && (
+                <Elements 
+                    key={session?.user?.email || "stripe-elements"} 
+                    stripe={stripePromise} 
+                    options={{ mode: "payment", currency: "usd", amount: totalPriceCalc(cart) }} 
+                >
+                    <PaymentForm totalPrice={totalPriceCalc(cart)} />
+                </Elements>
+            )}
         </div>
     )
-    }
 }
 
 export default Payment

@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
+import { Button } from "../ui/button";
 
 const tags = [
   {
@@ -37,7 +38,7 @@ const TagFilter = () => {
   const tagParams = params.get("tag") || "iphone";
 
   const handleTagClick = (tag: string) => {
-    if(tag === tagParams) {
+    if (tag === tagParams) {
       router.push(`?tag=${tagParams}`);
     } else {
       router.push(`?tag=${tag}`);
@@ -46,18 +47,19 @@ const TagFilter = () => {
   return (
     <div className="flex flex-wrap items-center gap-2 mb-5 md:flex-1 flex-none justify-start">
       {tags.map((t) => (
-        <p
-  className={cn(
-    "px-3 border rounded-sm cursor-pointer",
-    tagParams === t.tag &&
-      "bg-primary text-primary-foreground border-primary"
-          )}
+        <button
+          type="button"
           key={t.id}
           onClick={() => handleTagClick(t.tag)}
->
-  {t.name}
-</p>
-
+          className={cn(
+            "px-4 rounded-sm border transition-colors",
+            tagParams === t.tag
+              ? "bg-primary text-primary-foreground border-primary"
+              : "border-gray-300 text-foreground hover:bg-muted"
+          )}
+        >
+          {t.name}
+        </button>
       ))}
     </div>
   );
