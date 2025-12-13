@@ -1,4 +1,5 @@
 
+import MainVisual from "@/components/mainvisual";
 import Products from "@/components/products";
 import SearchBox from "@/components/products/search-box";
 import TagFilter from "@/components/products/tag-filter";
@@ -18,6 +19,7 @@ export default async function Home() {
   
   return (
     <main>
+      <MainVisual/>
       <div className="md:flex flex-none justify-between flex-row-reverse">
         <SearchBox productWithVariants={products} />
       <TagFilter />
