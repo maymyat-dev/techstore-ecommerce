@@ -52,7 +52,7 @@ export default async function Layout({
   return (
     <>
       <DashBoardNavigation routes={routes} />
-      <section>{children}</section>
+      <section className="max-w-7xl mx-auto">{children}</section>
     </>
   );
 }

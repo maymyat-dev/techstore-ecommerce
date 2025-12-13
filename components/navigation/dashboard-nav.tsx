@@ -17,7 +17,7 @@ type DashBoardNavigationProps = {
 const DashBoardNavigation = ({ routes }: DashBoardNavigationProps) => {
   const pathname = usePathname();
   return (
-    <nav className="mb-10">
+    <nav className="max-w-7xl mx-auto mb-10">
       <div className="flex justify-start gap-2 flex-wrap py-2 px-4 md:rounded-full shadow-sm rounded-sm bg-white dark:bg-gray-800">
         {routes.map((route, index) => (
           <Link href={route.path} key={index} passHref>

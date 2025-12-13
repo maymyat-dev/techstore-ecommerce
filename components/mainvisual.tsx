@@ -17,7 +17,6 @@ const MainVisual = () => {
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 md:bg-gradient-to-r md:from-black/80 md:via-black/50 md:to-black/10" />
 
-
       <div className="absolute inset-0 flex items-end md:items-center">
         <div className="w-full px-5 pb-6 md:max-w-xl md:px-14 md:pb-0">
           <div className="rounded-xl bg-black/40 p-5 backdrop-blur-sm md:bg-white/5 md:p-8">
@@ -30,10 +29,9 @@ const MainVisual = () => {
             </h1>
 
             <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80 md:text-base">
-              Aluminum body, A19 Pro chip, 8× optical zoom, and the longest battery
-              life ever.
+              Aluminum body, A19 Pro chip, 8× optical zoom, and the longest
+              battery life ever.
             </p>
-
 
             <div className="mt-6 flex gap-3">
               <button className="flex-1 rounded-md bg-primary px-5 py-2 text-sm font-semibold transition-all hover:scale-105 active:scale-95 md:flex-none">

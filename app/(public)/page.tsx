@@ -1,4 +1,3 @@
-
 import MainVisual from "@/components/mainvisual";
 import Products from "@/components/products";
 import SearchBox from "@/components/products/search-box";
@@ -24,7 +23,7 @@ export default async function Home() {
         <SearchBox productWithVariants={products} />
       <TagFilter />
       </div>
-      <Products productWithVariants={products}/>
+      <Products productWithVariants={products} />
     </main>
   );
 }

@@ -26,9 +26,8 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppNav/>
-           <main className="max-w-7xl mx-auto px-5 pb-10"> 
+           
             {children}
-          </main>
           <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
         </AuthProvider>
