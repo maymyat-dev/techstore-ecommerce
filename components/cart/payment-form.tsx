@@ -10,6 +10,7 @@ import { useCartStore } from "@/store/cart-store";
 import { processPayment } from "@/server/actions/payment";
 import { createOrder } from "@/server/actions/orders";
 import { useAction } from "next-safe-action/hooks";
+import { ArrowLeft } from "lucide-react";
 
 type PaymentFormProps = {
   totalPrice: number;
@@ -101,8 +102,9 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
   return (
     <form onSubmit={onSubmitHandler}>
       <PaymentElement />
-      <div className="flex justify-end">
-        <Button className="w-1/2 mt-5" disabled={loading || !stripe || !elements}>Pay</Button>
+      <div className="flex justify-between gap-2 mt-5">
+        <Button type="button" variant={"outline"} onClick={()=>setCartPosition("Order")} className="w-[100px]"> <ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
+        <Button type="button"  className="flex-1" disabled={loading || !stripe || !elements}>Pay</Button>
       </div>
     </form>
   );
