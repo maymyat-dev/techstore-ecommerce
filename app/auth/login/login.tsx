@@ -28,8 +28,15 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+
+
 
 const Login = () => {
+  const searchParams = useSearchParams();
+const callbackUrl = searchParams.get("callbackUrl") || "/";
+
   const [isTwoFactorOn, setIsTwoFactorOn] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const form = useForm({
@@ -41,21 +48,35 @@ const Login = () => {
     },
   });
 
-  const { execute, status, result } = useAction(login, {
-    onSuccess: ({ data }) => {
-      if (data?.error) {
-        toast.error(data?.error);
-        form.reset();
-      }
-      if (data?.success) {
-        toast.success(data?.success);
-      }
-      if (data?.twoFactor) {
-        toast.success(data?.twoFactor);
-        setIsTwoFactorOn(true);
-      }
-    },
-  });
+const { execute, status } = useAction(login, {
+  onSuccess: async ({ data }) => {
+    if (data?.error) {
+      toast.error(data.error);
+      form.reset();
+      return;
+    }
+
+    if (data?.twoFactor) {
+      toast.success(data.twoFactor);
+      setIsTwoFactorOn(true);
+      return;
+    }
+
+    if (data?.success) {
+      toast.success(data.success);
+
+      await signIn("credentials", {
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+        redirect: false,
+      });
+
+ 
+      window.location.href = callbackUrl;
+    }
+  },
+});
+
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     const { email, password, code } = values;

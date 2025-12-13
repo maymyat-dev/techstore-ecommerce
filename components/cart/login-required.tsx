@@ -20,13 +20,23 @@ export default function LoginRequired({ onClose }: { onClose?: () => void }) {
         </CardHeader>
 
         <CardContent className="flex flex-col gap-4">
-          <Link href="/auth/login" className="w-full" onClick={onClose}>
-            <Button className="w-full py-5 text-base">
-              Log In <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-
-          <Link href="/auth/register" className="w-full">
+         <Link
+  href={{
+    pathname: "/auth/login",
+    query: { callbackUrl: "/" },
+  }}
+  className="w-full"
+  onClick={onClose}
+>
+  <Button className="w-full py-5 text-base">
+    Log In <ArrowRight className="ml-2 h-4 w-4" />
+  </Button>
+</Link>
+          <Link  href={{
+    pathname: "/auth/register",
+  }}
+  className="w-full"
+  onClick={onClose}>
             <Button
               variant="outline"
               className="w-full py-5 text-base hover:bg-accent"
