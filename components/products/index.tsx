@@ -5,6 +5,7 @@ import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import ProductPagination from "./product-pagination";
 
 type ProductsProps = {
   productWithVariants: VariantsWithProduct[];
@@ -15,8 +16,21 @@ const Products = ({ productWithVariants }: ProductsProps) => {
   const params = useSearchParams();
   const tagParams = params.get("tag") || "iphone";
 
-  const [filterProducts, setFilterProducts] = useState<VariantsWithProduct[]>([]);
+  const [filterProducts, setFilterProducts] = useState<VariantsWithProduct[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
+
+  const ITEMS_PER_PAGE = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(filterProducts.length / ITEMS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedProducts = filterProducts.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   useEffect(() => {
     const filtered = productWithVariants.filter(
@@ -24,8 +38,9 @@ const Products = ({ productWithVariants }: ProductsProps) => {
     );
 
     setFilterProducts(filtered);
+    setCurrentPage(1);
     setLoading(false);
-  }, [tagParams]);
+  }, [tagParams, productWithVariants]);
 
   if (loading) {
     return (
@@ -53,8 +68,9 @@ const Products = ({ productWithVariants }: ProductsProps) => {
   }
 
   return (
-    <main className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-      {filterProducts.map((p) => {
+    <main>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      {paginatedProducts.map((p) => {
         const imageUrl = p.variantImages[0]?.image_url ?? PLACEHOLDER_IMAGE;
 
         return (
@@ -95,6 +111,13 @@ const Products = ({ productWithVariants }: ProductsProps) => {
           </Link>
         );
       })}
+      
+      </div>
+      <ProductPagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </main>
   );
 };

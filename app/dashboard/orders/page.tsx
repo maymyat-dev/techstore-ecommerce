@@ -126,7 +126,7 @@ else {
                         <DialogTrigger asChild>
                           <Button variant="outline">View Detail</Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl bg-white dark:bg-gray-800">
+                        <DialogContent className="max-w-2xl bg-white dark:bg-gray-800 overflow-auto">
                           <DialogHeader>
                             <DialogTitle>
                               Details of Order # {order.id}

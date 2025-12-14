@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 
 export default function TradeInSection() {
   return (
-    <section className="w-full bg-primary py-5 rounded-md mt-20 mb-10">
+    <section className="w-full bg-primary py-5 rounded-md md:mt-20 mt-10 mb-10">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex flex-col items-center justify-between gap-6 rounded-3xl bg-primary/90 md:p-8 p-4 text-white md:flex-row">
           <div className="max-w-xl">

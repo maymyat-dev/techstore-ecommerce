@@ -26,11 +26,14 @@ export default function WhyShopWithUsSection() {
   return (
     <section className="w-full md:mb-20 mb-10">
       <div className="">
-        <div className="mb-5 text-center">
-          <h2 className="text-3xl md:text-2xl font-bold mb-2 ">
-            The TechStore Difference
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+            The <span className="text-primary">TechStore</span> Difference
           </h2>
-          <p className="text-gray-600">
+
+          <div className="mx-auto mt-2 h-1 w-16 rounded-full bg-primary" />
+
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
             Why you should shop with us
           </p>
         </div>
@@ -46,12 +49,8 @@ export default function WhyShopWithUsSection() {
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Icon className="h-6 w-6" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold">
-                  {item.title}
-                </h3>
-                <p className="text-sm">
-                  {item.description}
-                </p>
+                <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
+                <p className="text-sm">{item.description}</p>
               </li>
             );
           })}

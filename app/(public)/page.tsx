@@ -22,7 +22,7 @@ export default async function Home() {
     <main>
       <MainVisual />
       <Benefits />
-      <div className="md:flex flex-none justify-between flex-row-reverse">
+      <div className="flex justify-between md:flex-row-reverse flex-col gap-4 mb-5">
         <SearchBox productWithVariants={products} />
       <TagFilter />
       </div>
