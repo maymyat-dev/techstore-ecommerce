@@ -4,7 +4,7 @@ import mvImage from "@/public/images/mv-img01.webp";
 
 const MainVisual = () => {
   return (
-    <section className="relative mb-10 overflow-hidden rounded-2xl">
+    <section className="relative md:mb-20 mb-10 overflow-hidden rounded-2xl">
       <div className="relative h-[520px] sm:h-[580px] md:h-[560px]">
         <Image
           src={mvImage}

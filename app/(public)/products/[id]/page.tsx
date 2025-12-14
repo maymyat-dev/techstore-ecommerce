@@ -6,7 +6,8 @@ import formatCurrency from "@/lib/formatCurrency";
 import { db } from "@/server";
 import { productVariants } from "@/server/schema";
 import { eq } from "drizzle-orm";
-import { ShoppingBasket } from "lucide-react";
+import { ArrowLeft, ShoppingBasket } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 type ProductDetailsPageProps = {
@@ -47,7 +48,11 @@ const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
   const { product } = productWithVariants;
 
   return (
-    <main className="md:flex gap-10 justify-between">
+    
+    <main>
+      <Link href={'/'} className="mb-6 inline-block">
+      <Button type="button" variant={"outline"} className="w-[100px]"> <ArrowLeft className="mr-2 h-4 w-4" /> Back</Button></Link>
+      <div className="md:flex gap-10 justify-between">
 
       <div className="md:flex-1">
         <ImageSlider variants={product.productVariants} />
@@ -97,6 +102,7 @@ const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
         <AddToCart maxQuantity={10} />
 
       </div>
+    </div>
     </main>
   );
 };
