@@ -104,3 +104,6 @@ UPLOADTHING_TOKEN=your_uploadthing_token
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 STRIPE_SECRET_KEY=your_stripe_secret_key
 npm run dev
+
+TechStore Email Note
+TechStore Email Service Note: The current email functionality (Forget Password, 2FA) uses the Resend API. Due to Resend Free Tier constraints, emails can currently only be sent to the authorized/verified email address. To enable emails for all users, domain verification is required in the Resend dashboard.
