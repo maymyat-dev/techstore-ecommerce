@@ -3,8 +3,6 @@
 **TechStore** is a high-performance, full-stack e-commerce platform specializing in premium iDevice products.  
 It is built with a strong focus on **security**, **smooth UI/UX**, and **data-driven administration**.
 
-🌐 **Live Demo:** https://techstore.maymyatmon.com/
-
 ---
 
 ## 🚀 Key Features
@@ -63,36 +61,53 @@ It is built with a strong focus on **security**, **smooth UI/UX**, and **data-dr
 
 ---
 
-## 📂 Architecture & Design
+🧠 Architecture & Design
 
-The project follows a **modular architecture** to keep business logic cleanly separated from UI components:
+The project follows a modular and scalable architecture:
 
-- **Components**  
-  Reusable UI components built with shadcn/ui
-- **Hooks**  
-  Custom hooks for cart logic and authentication state
-- **Lib**  
-  Centralized configuration for Stripe, authentication, and database clients
+-App Router
+Handles routing, layouts, and server components
 
-This structure improves scalability, maintainability, and developer experience.
+-Server Layer
+Encapsulates business logic and secure operations
+
+-Lib Layer
+Centralized utilities (Stripe, pricing, formatting, base URL)
+
+-Store Layer
+Client-side state management with persistence
+
+This separation improves maintainability, testability, and long-term scalability.
 
 ---
 
 ## 📅 Roadmap
 
-- [ ] Out-of-stock management (automatic UI updates when inventory reaches zero)
-- [ ] AI Chatbot for 24/7 customer assistance
-- [ ] Advanced admin settings for site-wide configuration
+ [ ] Out-of-stock management (automatic UI updates when inventory reaches zero)
+ [ ] AI Chatbot for 24/7 customer assistance
+ [ ] Advanced admin settings for site-wide configuration
 
 ---
 
 ## 💻 Getting Started
-
-### Environment Setup & Install
-```bash
-git clone https://github.com/your-username/techstore.git
+git clone [https://maymyat-dev/techstore-ecommerce](https://github.com/maymyat-dev/homenest-ecommerce-frontend)
 cd techstore
 npm install
+npm run dev
+
+---
+
+📧 Email Service Note
+
+Email features such as Forgot Password and 2FA verification use the Resend API.
+
+⚠️ Due to Resend Free Tier limitations, emails can currently only be sent to the verified email address.
+To enable email delivery for all users, domain verification is required in the Resend dashboard.
+
+---
+
+### 🔐 Environment Variables
+```bash
 DATABASE_URL=postgresql://user:password@host:5432/dbname
 AUTH_SECRET=your_auth_secret
 AUTH_GOOGLE_ID=your_google_client_id
@@ -105,5 +120,4 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 STRIPE_SECRET_KEY=your_stripe_secret_key
 npm run dev
 
-TechStore Email Note
-TechStore Email Service Note: The current email functionality (Forget Password, 2FA) uses the Resend API. Due to Resend Free Tier constraints, emails can currently only be sent to the authorized/verified email address. To enable emails for all users, domain verification is required in the Resend dashboard.
+
