@@ -61,21 +61,21 @@ It is built with a strong focus on **security**, **smooth UI/UX**, and **data-dr
 
 ---
 
-🧠 Architecture & Design
+## 🧠 Architecture & Design
 
 The project follows a modular and scalable architecture:
 
--App Router
-Handles routing, layouts, and server components
+**App Router**
+-Handles routing, layouts, and server components
 
--Server Layer
-Encapsulates business logic and secure operations
+**Server Layer**
+-Encapsulates business logic and secure operations
 
--Lib Layer
-Centralized utilities (Stripe, pricing, formatting, base URL)
+**Lib Layer**
+-Centralized utilities (Stripe, pricing, formatting, base URL)
 
--Store Layer
-Client-side state management with persistence
+**Store Layer**
+-Client-side state management with persistence
 
 This separation improves maintainability, testability, and long-term scalability.
 
@@ -83,17 +83,17 @@ This separation improves maintainability, testability, and long-term scalability
 
 ## 📅 Roadmap
 
- [ ] Out-of-stock management (automatic UI updates when inventory reaches zero)
- [ ] AI Chatbot for 24/7 customer assistance
- [ ] Advanced admin settings for site-wide configuration
+- [ ] Out-of-stock management (automatic UI updates when inventory reaches zero)
+- [ ] AI Chatbot for 24/7 customer assistance
+- [ ] Advanced admin settings for site-wide configuration
 
 ---
 
 ## 💻 Getting Started
 git clone [https://maymyat-dev/techstore-ecommerce](https://github.com/maymyat-dev/homenest-ecommerce-frontend)
-cd techstore
-npm install
-npm run dev
+- cd techstore
+- npm install
+- npm run dev
 
 ---
 
