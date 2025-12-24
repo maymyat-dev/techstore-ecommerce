@@ -27,23 +27,43 @@ It is built with a strong focus on **security**, **smooth UI/UX**, and **data-dr
 - Order success & confirmation pages
 - User order summary and history
 
+#### 🔒 Security & Personalization
+- Profile Settings: Update user display names and account preferences.
+- Two-Factor Authentication (2FA): Enhanced security layer to protect against unauthorized access.
+
 ---
 
 ### 🛠️ Admin Management
 
-#### 📊 Centralized Dashboard
-- Real-time overview of business performance
+#### 📊 Advanced Analytics
+- Business Insights: Real-time visualization of sales data and store performance.
 
-#### 📦 Inventory Control
-- Full CRUD functionality (Add / Update / Delete products)
 
-#### 📑 Order Oversight
-- Master order table
-- **Detail dialog modal** for granular order inspection
+#### 📦 Comprehensive Product Management
+- The system supports a complex catalog with high flexibility:
+- Product Creation: * Add Variants (size, colors, images, tags).
+- Assign specific Colors to products.
+- Multi-Image upload support for each product.
+- Tagging System for improved categorization and searchability.
 
-#### 📈 Analytics & Support
-- Sales analytics and total revenue tracking
-- Admin-side chat interface for customer interaction
+#### Smart Inventory Table:
+
+- Search & Filter: Find products instantly by name.
+- Column Management: Customizable table views to focus on the data that matters.
+- Full CRUD: Seamlessly Edit or Delete products and their associated variants/images.
+
+#### 📑 Order & Customer Handling
+- Order Overview: A complete list of all customer transactions and their current status.
+- Order Details Dialog: Click any order to open a detailed modal containing:
+
+### Customer contact and shipping information.
+
+- Itemized list of purchased products.
+- Payment and fulfillment status updates.
+
+#### 🔒 Security & Personalization
+- Profile Settings: Update admin display names and account preferences.
+- Two-Factor Authentication (2FA): Enhanced security layer to protect against unauthorized access.
 
 ---
 
