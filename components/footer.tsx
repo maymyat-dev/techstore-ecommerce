@@ -24,17 +24,17 @@ const Footer = () => {
             <h4 className="mb-4 text-sm font-semibold">Support</h4>
             <ul className="space-y-3 text-sm opacity-70">
               <li>
-                <Link href="#" className="transition hover:text-primary">
+                <Link href="/help" className="transition hover:text-primary">
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link href="#" className="transition hover:text-primary">
+                <Link href="/support" className="transition hover:text-primary">
                   Contact Support
                 </Link>
               </li>
               <li>
-                <Link href="#" className="transition hover:text-primary">
+                <Link href="/shipping" className="transition hover:text-primary">
                   Shipping & Returns
                 </Link>
               </li>
@@ -45,22 +45,22 @@ const Footer = () => {
             <h4 className="mb-4 text-sm font-semibold">Company</h4>
             <ul className="space-y-3 text-sm opacity-70">
               <li>
-                <Link href="#" className="transition hover:text-primary">
+                <Link href="/about" className="transition hover:text-primary">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="#" className="transition hover:text-primary">
+                <Link href="/careers" className="transition hover:text-primary">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="#" className="transition hover:text-primary">
+                <Link href="/privacy" className="transition hover:text-primary">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="#" className="transition hover:text-primary">
+                <Link href="/terms" className="transition hover:text-primary">
                   Terms of Service
                 </Link>
               </li>
@@ -74,14 +74,11 @@ const Footer = () => {
           </p>
 
           <div className="flex gap-5 text-sm opacity-70">
-            <Link href="#" className="transition hover:text-primary">
+            <Link href="/privacy" className="transition hover:text-primary">
               Privacy
             </Link>
-            <Link href="#" className="transition hover:text-primary">
+            <Link href="/terms" className="transition hover:text-primary">
               Terms
-            </Link>
-            <Link href="#" className="transition hover:text-primary">
-              Cookies
             </Link>
           </div>
         </div>

@@ -8,58 +8,50 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { usePagination } from "@/hooks/usePagination";
 
 type Props = {
   totalPages: number;
   currentPage: number;
-  onPageChange: (page: number) => void;
 };
 
-export default function ProductPagination({
+export default function CommonPagination({
   totalPages,
   currentPage,
-  onPageChange,
 }: Props) {
+  const { setPage } = usePagination();
+
   if (totalPages <= 1) return null;
 
   return (
     <div className="flex justify-center mt-6">
       <Pagination>
         <PaginationContent>
-
           <PaginationItem>
             <PaginationPrevious
-              href="#"
               aria-disabled={currentPage === 1}
-              className={`${
+              onClick={() => setPage(currentPage - 1)}
+              className={
                 currentPage === 1
                   ? "pointer-events-none opacity-50"
-                  : "text-primary hover:text-primary"
-              }`}
-              onClick={(e) => {
-                e.preventDefault();
-                onPageChange(Math.max(currentPage - 1, 1));
-              }}
+                  : ""
+              }
             />
           </PaginationItem>
 
-
           {Array.from({ length: totalPages }).map((_, i) => {
             const page = i + 1;
+
             return (
               <PaginationItem key={page}>
                 <PaginationLink
-                  href="#"
                   isActive={page === currentPage}
-                  className={`${
+                  onClick={() => setPage(page)}
+                  className={
                     page === currentPage
-                      ? "bg-primary text-primary-foreground"
-                      : "text-primary hover:bg-primary/10"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onPageChange(page);
-                  }}
+                      ? "pointer-events-none bg-primary text-white"
+                      : ""
+                  }
                 >
                   {page}
                 </PaginationLink>
@@ -67,20 +59,15 @@ export default function ProductPagination({
             );
           })}
 
-
           <PaginationItem>
             <PaginationNext
-              href="#"
               aria-disabled={currentPage === totalPages}
-              className={`${
+              onClick={() => setPage(currentPage + 1)}
+              className={
                 currentPage === totalPages
                   ? "pointer-events-none opacity-50"
-                  : "text-primary hover:text-primary"
-              }`}
-              onClick={(e) => {
-                e.preventDefault();
-                onPageChange(Math.min(currentPage + 1, totalPages));
-              }}
+                  : ""
+              }
             />
           </PaginationItem>
         </PaginationContent>

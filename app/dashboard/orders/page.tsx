@@ -32,49 +32,24 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
+import { getOrders } from "@/server/actions/get-orders";
+import CommonPagination from "@/components/products/common-pagination";
 
-const OrdersPage = async () => {
+const OrdersPage = async ({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) => {
   const session = await auth();
-  // console.log("SESSION ROLE =>", session?.user.role)
   if (!session) return redirect("/");
 
-let customerOrders;
+  const page = Number(searchParams.page) || 1;
 
+  const res = await getOrders(page, 10);
 
-if (session.user.role === "admin") {
-  customerOrders = await db.query.orders.findMany({
-    with: {
-      orderProduct: {
-        with: {
-          product: true,
-          productVariants: {
-            with: { variantImages: true },
-          },
-          order: true,
-        },
-      },
-    },
-  });
-}
+  if ("error" in res) return <div>Error: {res.error}</div>;
 
-
-else {
-  customerOrders = await db.query.orders.findMany({
-    where: eq(orders.userID, session.user.id),
-    with: {
-      orderProduct: {
-        with: {
-          product: true,
-          productVariants: {
-            with: { variantImages: true },
-          },
-          order: true,
-        },
-      },
-    },
-  });
-}
-
+  const { customerOrders, totalPages, currentPage } = res;
 
   return (
     <Card>
@@ -200,6 +175,7 @@ else {
             })}
           </TableBody>
         </Table>
+        <CommonPagination currentPage={currentPage} totalPages={totalPages} />
       </CardContent>
     </Card>
   );

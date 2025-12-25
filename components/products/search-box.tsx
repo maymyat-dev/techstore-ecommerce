@@ -31,7 +31,7 @@ const SearchBox = ({ productWithVariants }: SearchBoxProps) => {
   }, [searchKey, productWithVariants]);
 
   return ( 
-    <div className="flex-1 relative">
+    <div className="md:w-1/3 relative">
 
       <div className="relative w-full">
         <Input

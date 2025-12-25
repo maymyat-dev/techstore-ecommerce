@@ -8,6 +8,7 @@ import {
   Laptop,
   Monitor,
   Headphones,
+  Watch,
 } from "lucide-react";
 import React from "react";
 
@@ -17,6 +18,7 @@ const tags = [
   { id: 3, name: "MacBook", tag: "macbook", icon: Laptop },
   { id: 4, name: "iMac", tag: "imac", icon: Monitor },
   { id: 5, name: "AirPods", tag: "airpods", icon: Headphones },
+  { id: 6, name: "iWatch", tag: "iwatch", icon: Watch },
 ];
 
 const TagFilter = () => {
@@ -29,30 +31,34 @@ const TagFilter = () => {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      {tags.map((t) => {
-        const isActive = tagParams === t.tag;
-        const Icon = t.icon;
+   <div className="flex w-full gap-2 overflow-x-auto pb-2 md:w-2/3 md:flex-wrap md:overflow-visible">
+  {tags.map((t) => {
+    const isActive = tagParams === t.tag;
+    const Icon = t.icon;
 
-        return (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => handleTagClick(t.tag)}
-            className={cn(
-              "flex items-center gap-2 h-9 min-w-[110px] rounded-full px-5 text-sm font-medium transition-all",
-              "border focus:outline-none focus:ring-2 focus:ring-primary/30",
-              isActive
-                ? "bg-primary text-white border-primary shadow-sm"
-                : "bg-background text-foreground border-input hover:bg-accent"
-            )}
-          >
-            <Icon className="h-4 w-4" />
-            {t.name}
-          </button>
-        );
-      })}
-    </div>
+    return (
+      <button
+        key={t.id}
+        type="button"
+        onClick={() => handleTagClick(t.tag)}
+        className={cn(
+          "flex shrink-0 items-center gap-2",
+          "h-10 px-4 rounded-full text-sm font-medium",
+          "border transition-colors",
+          isActive
+            ? "bg-primary text-primary-foreground border-primary"
+            : "bg-muted text-foreground border-border"
+        )}
+      >
+        <Icon className="h-4 w-4" />
+        {t.name}
+      </button>
+    );
+  })}
+</div>
+
+
+
   );
 };
 

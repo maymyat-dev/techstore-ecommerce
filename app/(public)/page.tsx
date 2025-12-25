@@ -6,7 +6,11 @@ import TagFilter from "@/components/products/tag-filter";
 import TradeInSection from "@/components/trade-product";
 import { db } from "@/server";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { page?: string; tag?: string };
+}) {
   const products = await db.query.productVariants.findMany({
     with: {
       variantImages: true,
@@ -17,7 +21,6 @@ export default async function Home() {
       desc(products.id)
     ],
   })
-  
   return (
     <main>
       <MainVisual />
@@ -26,7 +29,7 @@ export default async function Home() {
         <SearchBox productWithVariants={products} />
       <TagFilter />
       </div>
-      <Products productWithVariants={products} />
+      <Products searchParams={searchParams} />
       <TradeInSection />
     </main>
   );

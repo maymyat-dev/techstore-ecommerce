@@ -1,68 +1,33 @@
-"use client";
-import { VariantsWithProduct } from "@/lib/infer-types";
-import React, { useEffect, useState } from "react";
+
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import ProductPagination from "./product-pagination";
+import CommonPagination from "./common-pagination";
+import { getProducts } from "@/hooks/get-products";
 
-type ProductsProps = {
-  productWithVariants: VariantsWithProduct[];
-};
-
-const Products = ({ productWithVariants }: ProductsProps) => {
+const Products = async ({ 
+  searchParams = {}
+}: { 
+  searchParams: { page?: string; tag?: string } 
+}) => {
   const PLACEHOLDER_IMAGE = "/images/placeholder-product.png";
-  const params = useSearchParams();
-  const tagParams = params.get("tag") || "iphone";
+  
+  const page = Number(searchParams.page) || 1;
+  const tag = searchParams.tag || "iphone";
 
-  const [filterProducts, setFilterProducts] = useState<VariantsWithProduct[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
 
-  const ITEMS_PER_PAGE = 6;
-  const [currentPage, setCurrentPage] = useState(1);
+  const res = await getProducts(page, 6, tag);
 
-  const totalPages = Math.ceil(filterProducts.length / ITEMS_PER_PAGE);
+  if (res.error) return <div className="p-10 text-center text-red-500">{res.error}</div>;
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedProducts = filterProducts.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
-  );
+  const products = res.success || [];
+  const totalPages = res.totalPages || 1;
 
-  useEffect(() => {
-    const filtered = productWithVariants.filter(
-      (item) => item.variantTags[0]?.tag.toLowerCase() === tagParams
-    );
-
-    setFilterProducts(filtered);
-    setCurrentPage(1);
-    setLoading(false);
-  }, [tagParams, productWithVariants]);
-
-  if (loading) {
+  if (products.length === 0) {
     return (
-      <div className="flex justify-center items-center h-64 text-neutral-500">
-        Loading...
-      </div>
-    );
-  }
-
-  if (filterProducts.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center opacity-80">
-        <Image
-          src="/images/empty-cart.png"
-          alt="No Products"
-          width={160}
-          height={160}
-          className="mb-4 opacity-70"
-        />
-        <p className="text-neutral-700 dark:text-neutral-300 font-medium">
-          No products available for this category.
-        </p>
+      <div className="flex flex-col items-center justify-center py-16 opacity-80">
+        <Image src="/images/empty-cart.png" alt="No Products" width={160} height={160} className="mb-4 opacity-70" />
+        <p className="text-neutral-700 font-medium">No products available for this tag.</p>
       </div>
     );
   }
@@ -70,14 +35,14 @@ const Products = ({ productWithVariants }: ProductsProps) => {
   return (
     <main>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-      {paginatedProducts.map((p) => {
-        const imageUrl = p.variantImages[0]?.image_url ?? PLACEHOLDER_IMAGE;
+        {products.map((p) => {
+          const imageUrl = p.variantImages[0]?.image_url ?? PLACEHOLDER_IMAGE;
 
-        return (
-          <Link
-            key={p.id}
-            className="bg-white dark:bg-gray-800 rounded-sm p-4 block hover:shadow-md transition-all duration-200"
-            href={{
+          return (
+            <Link
+              key={p.id}
+              className="bg-white dark:bg-gray-800 rounded-sm p-4 block hover:shadow-md transition-all duration-200"
+              href={{
               pathname: `/products/${p.id}`,
               query: {
                 vid: p.id,
@@ -88,36 +53,30 @@ const Products = ({ productWithVariants }: ProductsProps) => {
                 price: p.product.price,
               },
             }}
-          >
-            <Image
-              src={imageUrl}
-              alt={p.product.title}
-              width={500}
-              height={300}
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              priority
-              className="w-full h-48 object-contain rounded-md"
-            />
+            >
+              <Image
+                src={imageUrl}
+                alt={p.product.title}
+                width={500}
+                height={300}
+                className="w-full h-48 object-contain rounded-md"
+              />
 
-            <div className="border-t pt-2 mt-2">
-              <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
-                {p.product.title}
-              </h3>
-
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 font-semibold">
-                {formatCurrency(p.product.price)}
-              </p>
-            </div>
-          </Link>
-        );
-      })}
-      
+              <div className="border-t pt-2 mt-2">
+                <h3 className="text-sm font-medium truncate">{p.product.title}</h3>
+                <p className="text-sm font-semibold">{formatCurrency(p.product.price)}</p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
-      <ProductPagination
-        totalPages={totalPages}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+
+      <div className="mt-10 flex justify-center">
+        <CommonPagination 
+          totalPages={totalPages} 
+          currentPage={page} 
+        />
+      </div>
     </main>
   );
 };
