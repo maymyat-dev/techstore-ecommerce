@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import AppNav from "@/components/navigation/app-nav";
 import { AuthProvider } from "@/components/auth-provider";
+import AdminNav from "@/components/navigation/admin-nav";
 
 export const metadata: Metadata = {
   title: "TechStore",
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={`antialiased`} suppressHydrationWarning>
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <AdminNav/>
           <AppNav/>
            
             {children}
