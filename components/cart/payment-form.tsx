@@ -8,8 +8,6 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { useCartStore } from "@/store/cart-store";
 import { processPayment } from "@/server/actions/payment";
-import { createOrder } from "@/server/actions/orders";
-import { useAction } from "next-safe-action/hooks";
 import { ArrowLeft } from "lucide-react";
 
 type PaymentFormProps = {
@@ -24,19 +22,6 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
   const [errorMsg, setErrorMsg] = useState("");
   const stripe = useStripe();
   const elements = useElements();
-
-  const { execute } = useAction(createOrder, {
-    onSuccess: ({data}) => {
-      if (data?.error) {
-
-      }
-      if (data?.success) {
-        clearCart();
-        setCartPosition("Success");
-      }
-    }
-
-  })
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -73,38 +58,47 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
     if (data?.success) {
       const paymentResponse = await stripe.confirmPayment({
         elements,
-        clientSecret: data.success.clientSecretId!,
+        clientSecret: data.success.clientSecret!,
         redirect: "if_required",
         confirmParams: {
-          return_url: "http://localhost:3000/success",
+          return_url: `${window.location.origin}/stripe-redirect`,
           receipt_email: data.success.user_email!,
         },
       });
-        if (paymentResponse.error) {
-            setErrorMsg(paymentResponse.error.message || "Something went wrong");
-            setLoading(false);
-            return
-        } else {
-            setLoading(false);
-          execute({
-            paymentId: data.success.paymentIntentId,
-            totalPrice,
-            status: "pending",
-            products: cart.map((cartItem) => ({
-              productId: cartItem.id,
-              quantity: cartItem.variant.quantity,
-              variantId: cartItem.variant.variantId,
-            }))
-          })
-        }
+      if (paymentResponse.error) {
+        setErrorMsg(paymentResponse.error.message || "Payment failed");
+        setLoading(false);
+        return;
+      }
+      if (paymentResponse.paymentIntent?.status === "succeeded") {
+        clearCart();
+        setCartPosition("Success");
+
+        setLoading(false);
+        return;
+      }
     }
   };
   return (
     <form onSubmit={onSubmitHandler}>
       <PaymentElement />
       <div className="flex justify-between gap-2 mt-5">
-        <Button type="button" variant={"outline"} onClick={()=>setCartPosition("Order")} className="w-[100px]"> <ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
-        <Button type="submit"  className="flex-1" disabled={loading || !stripe || !elements}>Pay</Button>
+        <Button
+          type="button"
+          variant={"outline"}
+          onClick={() => setCartPosition("Order")}
+          className="w-[100px]"
+        >
+          {" "}
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <Button
+          type="submit"
+          className="flex-1"
+          disabled={loading || !stripe || !elements}
+        >
+          Pay
+        </Button>
       </div>
     </form>
   );

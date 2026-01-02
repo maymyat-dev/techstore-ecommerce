@@ -1,0 +1,1 @@
+ALTER TABLE "orderProduct" ALTER COLUMN "productVariantID" DROP NOT NULL;

@@ -135,8 +135,8 @@ const OrdersPage = async ({
                                         <TableCell>
                                           <Image
                                             src={
-                                              productVariants.variantImages[0]
-                                                ?.image_url
+                                              productVariants?.variantImages[0]
+                                                ?.image_url || "/placeholder-product.png"
                                             }
                                             alt={product.title}
                                             width={50}
@@ -152,7 +152,7 @@ const OrdersPage = async ({
                                             className="w-4 h-4 rounded-full"
                                             style={{
                                               backgroundColor:
-                                                productVariants.color,
+                                                productVariants?.color,
                                             }}
                                           ></div>
                                         </TableCell>
