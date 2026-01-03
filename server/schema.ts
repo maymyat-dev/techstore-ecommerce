@@ -206,10 +206,10 @@ export const orderProduct = pgTable("orderProduct", {
   quantity: integer("quantity").notNull(),
   productVariantID: integer("productVariantID")
     .references(() => productVariants.id, { onDelete: "cascade" }),
-  productID: serial("productID")
+  productID: integer("productID")
     .notNull()
     .references(() => products.id, { onDelete: "cascade" }),
-  orderID: serial("orderID").notNull().references(() => orders.id, { onDelete: "cascade" }),
+  orderID: integer("orderID").notNull().references(() => orders.id, { onDelete: "cascade" }),
 })
 
 

@@ -9,6 +9,7 @@ export const createOrder = actionClient
   .schema(createOrderSchema)
   .action(
     async ({ parsedInput: { products, totalPrice, status, paymentId } }) => {
+      console.log("Products from Frontend:", products);
       const session = await auth();
 
       if (!session)

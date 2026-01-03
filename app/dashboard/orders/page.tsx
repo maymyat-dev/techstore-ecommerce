@@ -25,10 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { db } from "@/server";
 import { auth } from "@/server/auth";
-import { orders } from "@/server/schema";
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
@@ -136,7 +133,7 @@ const OrdersPage = async ({
                                           <Image
                                             src={
                                               productVariants?.variantImages[0]
-                                                ?.image_url || "/placeholder-product.png"
+                                                ?.image_url || "/images/placeholder-product.png"
                                             }
                                             alt={product.title}
                                             width={50}
@@ -148,13 +145,16 @@ const OrdersPage = async ({
                                           {formatCurrency(product.price)}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                          <div
-                                            className="w-4 h-4 rounded-full"
-                                            style={{
-                                              backgroundColor:
-                                                productVariants?.color,
-                                            }}
-                                          ></div>
+                                          <div className="flex justify-end">
+        {productVariants?.color ? (
+          <div
+            className="w-4 h-4 rounded-full border border-gray-200"
+            style={{ backgroundColor: productVariants.color }}
+          />
+        ) : (
+          <span className="text-xs text-gray-400">N/A</span>
+        )}
+      </div>
                                         </TableCell>
                                         <TableCell className="text-right">
                                           {quantity}

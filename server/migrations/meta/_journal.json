@@ -57,6 +57,13 @@
       "when": 1767388238022,
       "tag": "0007_certain_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1767459058804,
+      "tag": "0008_clever_frightful_four",
+      "breakpoints": true
     }
   ]
 }

@@ -46,6 +46,7 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
         title: cartItem.name,
         price: Number(cartItem.price),
         image: cartItem.image,
+        variantId: cartItem.variant.variantId,
       })),
     });
 
