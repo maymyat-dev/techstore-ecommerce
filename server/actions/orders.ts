@@ -17,9 +17,10 @@ export const createOrder = actionClient
       const order = await db
         .insert(orders)
         .values({
-          userID: session.user.id,
+          userID: session.user.id as string,
           total: totalPrice,
           status,
+          paymentIntentId: paymentId,
         })
         .returning();
 
