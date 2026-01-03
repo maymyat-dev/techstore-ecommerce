@@ -48,7 +48,7 @@ export const processPayment = actionClient
         const [order] = await db
           .insert(orders)
           .values({
-            userID: session.user.id,
+            userID: session.user.id as string,
             total: amount / 100,
             status: "pending",
             paymentIntentId: paymentIntent.id,
