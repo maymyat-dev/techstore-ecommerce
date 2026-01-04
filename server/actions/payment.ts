@@ -7,7 +7,6 @@ import Stripe from "stripe";
 import { orderProduct, orders } from "../schema";
 import { db } from "..";
 import { eq } from "drizzle-orm";
-import { randomUUID } from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -35,7 +34,7 @@ export const processPayment = actionClient
           automatic_payment_methods: { enabled: true },
         },
         {
-          idempotencyKey: randomUUID(), 
+          idempotencyKey: `pay_${session.user.id}_${amount}`, 
         }
       );
 
