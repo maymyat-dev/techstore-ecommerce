@@ -34,7 +34,7 @@ const Products = async ({
 
   return (
     <main>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {products.map((p) => {
           const imageUrl = p.variantImages[0]?.image_url ?? PLACEHOLDER_IMAGE;
 
@@ -62,9 +62,9 @@ const Products = async ({
                 className="w-full h-48 object-contain rounded-md"
               />
 
-              <div className="border-t pt-2 mt-2">
+              <div className="text-center pt-2 mt-2">
                 <h3 className="text-sm font-medium truncate">{p.product.title}</h3>
-                <p className="text-sm font-semibold">{formatCurrency(p.product.price)}</p>
+                <p className="text-lg font-semibold">{formatCurrency(p.product.price)}</p>
               </div>
             </Link>
           );

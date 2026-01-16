@@ -31,7 +31,7 @@ const TagFilter = () => {
   };
 
   return (
-   <div className="flex w-full gap-2 overflow-x-auto pb-2 md:w-2/3 md:flex-wrap md:overflow-visible">
+   <div className="flex w-full gap-4 overflow-x-auto pb-2 md:w-2/3 md:flex-wrap md:overflow-visible">
   {tags.map((t) => {
     const isActive = tagParams === t.tag;
     const Icon = t.icon;
@@ -43,11 +43,11 @@ const TagFilter = () => {
         onClick={() => handleTagClick(t.tag)}
         className={cn(
           "flex shrink-0 items-center gap-2",
-          "h-10 px-4 rounded-full text-sm font-medium",
+          "h-10 px-4 rounded-sm text-sm font-medium",
           "border transition-colors",
           isActive
             ? "bg-primary text-primary-foreground border-primary"
-            : "bg-muted text-foreground border-border"
+            : "dark:bg-gray-800 text-foreground border-border"
         )}
       >
         <Icon className="h-4 w-4" />
