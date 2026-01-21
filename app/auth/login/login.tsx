@@ -64,14 +64,7 @@ const { execute, status } = useAction(login, {
 
     if (data?.success) {
       toast.success(data.success);
-
-      await signIn("credentials", {
-        email: form.getValues("email"),
-        password: form.getValues("password"),
-        redirect: false,
-      });
-
- 
+      
       window.location.href = callbackUrl;
     }
   },
