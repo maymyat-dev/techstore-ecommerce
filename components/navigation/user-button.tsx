@@ -74,7 +74,7 @@ const UserButton = ({ user }: UserButtonProps) => {
 
             <DropdownMenuSeparator className="my-3" />
 
-            <DropdownMenuItem asChild onClick={()=>router.push("/dashboard/orders")}>
+            <DropdownMenuItem asChild >
               <Link
                 href="/dashboard/orders"
                 className="flex items-center gap-3 text-sm font-medium text-foreground hover:text-primary transition-all duration-200 group"
@@ -84,7 +84,7 @@ const UserButton = ({ user }: UserButtonProps) => {
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild onClick={()=>router.push("/dashboard/settings")}>
+            <DropdownMenuItem asChild >
               <Link
                 href="/dashboard/settings"
                 className="flex items-center gap-3 text-sm font-medium text-foreground hover:text-primary transition-all duration-200 group"
@@ -97,7 +97,7 @@ const UserButton = ({ user }: UserButtonProps) => {
             <DropdownMenuSeparator className="my-3" />
 
             <DropdownMenuItem
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="cursor-pointer flex items-center gap-3 text-sm font-medium hover:text-red-500"
             >
               <LogOut className="w-6 h-6 hover:text-red-500" />

@@ -62,11 +62,6 @@ const { execute, status } = useAction(login, {
       return;
     }
 
-    if (data?.success) {
-      toast.success(data.success);
-      
-      window.location.href = callbackUrl;
-    }
   },
 });
 

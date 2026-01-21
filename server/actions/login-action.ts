@@ -82,7 +82,7 @@ export const login = actionClient
           return { twoFactor: "Two Factor code sent to your email" };
         }
       }
-      await signIn("credentials", { email, password, redirect: false });
+      await signIn("credentials", { email, password, redirectTo: "/" });
 
       return { success: "Login successful" };
     } catch (error) {
