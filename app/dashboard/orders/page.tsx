@@ -31,6 +31,9 @@ import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
 import { getOrders } from "@/server/actions/get-orders";
 import CommonPagination from "@/components/products/common-pagination";
+import UpdateOrderStatus from "@/components/orders/update-order-status";
+import { OrderStatus } from "@/types/order-enum-schema";
+import OrderStatusBadge from "@/components/orders/status-order-badge";
 
 const OrdersPage = async ({
   searchParams,
@@ -76,20 +79,13 @@ const OrdersPage = async ({
                   <TableCell>{formatCurrency(order.total)}</TableCell>
                   <TableCell>{order.created?.toString()}</TableCell>
                   <TableCell>
-                    {order.status === "pending" && (
-                      <span className="text-yellow-500 border border-yellow-500 bg-yellow-50 rounded-full px-4 py-1">
-                        {order.status}
-                      </span>
-                    )}
-                    {order.status === "completed" && (
-                      <span className="text-green-500 border border-green-500 bg-green-50 rounded-full px-4 py-1">
-                        {order.status}
-                      </span>
-                    )}
-                    {order.status === "cancelled" && (
-                      <span className="text-red-500 border border-red-500 bg-red-50 rounded-full px-4 py-1">
-                        {order.status}
-                      </span>
+                    {session.user.role === "admin" ? (
+                      <UpdateOrderStatus
+                        orderId={order.id}
+                        currentStatus={order.status as OrderStatus}
+                      />
+                    ) : (
+                      <OrderStatusBadge status={order.status as OrderStatus} />
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -133,7 +129,8 @@ const OrdersPage = async ({
                                           <Image
                                             src={
                                               productVariants?.variantImages[0]
-                                                ?.image_url || "/images/placeholder-product.png"
+                                                ?.image_url ||
+                                              "/images/placeholder-product.png"
                                             }
                                             alt={product.title}
                                             width={50}
@@ -146,21 +143,26 @@ const OrdersPage = async ({
                                         </TableCell>
                                         <TableCell className="text-right">
                                           <div className="flex justify-end">
-        {productVariants?.color ? (
-          <div
-            className="w-4 h-4 rounded-full border border-gray-200"
-            style={{ backgroundColor: productVariants.color }}
-          />
-        ) : (
-          <span className="text-xs text-gray-400">N/A</span>
-        )}
-      </div>
+                                            {productVariants?.color ? (
+                                              <div
+                                                className="w-4 h-4 rounded-full border border-gray-200"
+                                                style={{
+                                                  backgroundColor:
+                                                    productVariants.color,
+                                                }}
+                                              />
+                                            ) : (
+                                              <span className="text-xs text-gray-400">
+                                                N/A
+                                              </span>
+                                            )}
+                                          </div>
                                         </TableCell>
                                         <TableCell className="text-right">
                                           {quantity}
                                         </TableCell>
                                       </TableRow>
-                                    )
+                                    ),
                                   )}
                                 </TableBody>
                               </Table>

@@ -4,6 +4,9 @@ import { auth } from "../auth";
 import { orderProduct, orders } from "../schema";
 import { actionClient } from "./safe-action";
 import { createOrderSchema } from "@/types/order-schema";
+import { orderStatusSchema } from "@/types/order-status-schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const createOrder = actionClient
   .schema(createOrderSchema)
@@ -32,10 +35,29 @@ export const createOrder = actionClient
             productID: product.productId,
             productVariantID: product.variantId,
             orderID: order[0].id,
-          })
-        )
+          }),
+        ),
       );
 
       return { success: "Order created successfully" };
-    }
+    },
   );
+
+export const updateOrderStatus = actionClient
+  .schema(orderStatusSchema)
+  .action(async ({ parsedInput: { id, status } }) => {
+    const session = await auth();
+
+    if (!session || session.user.role !== "admin")
+      return { error: "Admin access required." };
+
+    try {
+      await db.update(orders).set({ status }).where(eq(orders.id, id));
+      revalidatePath("/dashboard/orders");
+
+      return { success: "Order status updated successfully" };
+    } catch (error) {
+      console.log(error);
+      return { error: "Failed to update order status" };
+    }
+  });
