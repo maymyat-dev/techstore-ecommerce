@@ -1,40 +1,67 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
-
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+} from "../ui/sidebar";
 
 type Route = {
   label: string;
   path: string;
   icons: React.ReactNode;
 };
+
 type DashBoardNavigationProps = {
   routes: Route[];
 };
 
 const DashBoardNavigation = ({ routes }: DashBoardNavigationProps) => {
   const pathname = usePathname();
+
   return (
-    <nav className="max-w-7xl mx-auto mb-10">
-      <div className="flex justify-start gap-2 flex-wrap py-2 px-4 md:rounded-full shadow-sm rounded-sm bg-white dark:bg-gray-800">
-        {routes.map((route, index) => (
-          <Link href={route.path} key={index} passHref>
-            <span
-              className={cn(
-                "flex gap-2 px-4 py-4 rounded-full cursor-pointer transition-all duration-200",
-                "text-sm font-medium transition-all duration-300 ease-in-out",
-                pathname === route.path &&
-                  "bg-primary text-white dark:bg-primary-600 dark:text-white font-semibold shadow-md shadow-primary/50"
-              )}
-            >
-              {route.icons} {route.label}
-            </span>
-          </Link>
-        ))}
-      </div>
-    </nav>
+    <Sidebar className="min-h-screen">
+      <SidebarContent className="h-full">
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-bold uppercase tracking-widest py-6">
+            Admin Management
+          </SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-2">
+              {routes.map((route, index) => {
+                const isActive = pathname.startsWith(route.path);
+
+                return (
+                  <SidebarMenuItem key={index}>
+                    <Link
+                      href={route.path}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                        "text-sm font-medium",
+                        isActive
+                          ? "bg-primary text-white shadow-md"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-primary",
+                      )}
+                    >
+                      {route.icons}
+                      <span>{route.label}</span>
+                    </Link>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 };
 

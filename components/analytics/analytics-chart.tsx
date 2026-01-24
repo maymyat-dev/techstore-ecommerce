@@ -1,6 +1,6 @@
-"use client"
-import { TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+"use client";
+import { TrendingUp } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -8,36 +8,39 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
 const chartConfig = {
   order: {
     label: "Order",
     color: "var(--chart-1)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 type Data = {
-    day: string;
-    count: number;
-}
+  day: string;
+  count: number;
+};
 type AnalyticsChartProps = {
-    chartData: Data[]
-}
-const AnalyticsChart = ({chartData}: AnalyticsChartProps) => {
+  chartData: Data[];
+};
+const AnalyticsChart = ({ chartData }: AnalyticsChartProps) => {
   return (
     <Card className="w-full shadow-[0_0_15px_rgba(255,255,255,0.05)]">
       <CardHeader>
         <CardTitle>Sale Chart</CardTitle>
         <CardDescription>
-                  Show the number of orders a week
-                  <span className="ml-2"> {chartData[0].day}{chartData[chartData.length - 1].day}</span>
+          Show the number of orders a week
+          <span className="ml-2">
+            {" "}
+            {chartData[0].day} {chartData[chartData.length - 1].day}
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -84,7 +87,7 @@ const AnalyticsChart = ({chartData}: AnalyticsChartProps) => {
         </div> */}
       </CardFooter>
     </Card>
-  )
-}
+  );
+};
 
-export default AnalyticsChart
+export default AnalyticsChart;
