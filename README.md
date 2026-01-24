@@ -10,7 +10,7 @@ It is built with a strong focus on **security**, **smooth UI/UX**, and **data-dr
 ### 👤 Customer Experience
 
 #### 🔐 Advanced Authentication
-- OAuth authentication (Google)
+- OAuth authentication (Google, GitHub)
 - Traditional Email / Password login
 - Secure **Forgot Password** recovery
 - **Two-Factor Authentication (2FA)** toggle
