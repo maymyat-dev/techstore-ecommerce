@@ -48,7 +48,7 @@ const DashBoardNavigation = ({ routes }: DashBoardNavigationProps) => {
                         "text-sm font-medium",
                         isActive
                           ? "bg-primary text-white shadow-md"
-                          : "text-slate-600 hover:bg-slate-100 hover:text-primary",
+                          : "text-slate-600 dark:text-white  dark:hover:text-slate-600 hover:bg-slate-100 hover:text-primary",
                       )}
                     >
                       {route.icons}

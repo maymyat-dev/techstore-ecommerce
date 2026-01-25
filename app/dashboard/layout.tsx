@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import React from "react";
 
-
 const adminRoutes = [
   {
     label: "Analytics",
@@ -27,6 +26,8 @@ const adminRoutes = [
     path: "/dashboard/products",
     icons: <Package size={16} />,
   },
+];
+const commonRoutes = [
   {
     label: "Orders",
     path: "/dashboard/orders",
@@ -45,7 +46,8 @@ export default async function Layout({
 }>) {
   const session = await auth();
   const isAdmin = session?.user.role === "admin";
-  const routes = isAdmin ? adminRoutes : [];
+  const routes = isAdmin ? [...adminRoutes, ...commonRoutes] : commonRoutes;
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -53,17 +55,17 @@ export default async function Layout({
 
         <main className="flex flex-col flex-1 w-full overflow-x-hidden">
           {isAdmin && (
-        <>
-          <header className="flex items-center gap-2 p-4 border-b bg-white md:hidden">
-            <SidebarTrigger />
-            <span className="font-semibold text-sm">Dashboard</span>
-          </header>
+            <>
+              <header className="flex items-center gap-2 p-4 border-b bg-white md:hidden">
+                <SidebarTrigger />
+                <span className="font-semibold text-sm">Dashboard</span>
+              </header>
 
-          <div className="hidden md:flex items-center px-4">
-            <SidebarTrigger />
-          </div>
-        </>
-      )}
+              <div className="hidden md:flex items-center px-4">
+                <SidebarTrigger />
+              </div>
+            </>
+          )}
 
           <section className="flex-1 max-w-7xl mx-auto w-full px-6 py-4">
             {children}
