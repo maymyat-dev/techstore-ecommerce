@@ -4,8 +4,9 @@ import { eq, between } from "drizzle-orm"
 import { db } from ".."
 import { orders, products, users } from "../schema"
 import { endOfDay, format, startOfDay, subDays } from "date-fns"
-
+import { unstable_noStore as noStore } from "next/cache"
 export const analytics = async () => {
+    noStore();
     try {
         const pendingOrders = await db.select().from(orders).where(eq(orders.status, "pending"))
 
@@ -31,6 +32,7 @@ export const analytics = async () => {
 export const weeklyAnalytics = async () => {
     try {
         const today = new Date();
+        
         const days = Array.from({ length: 7 }, (_, index) => {
           return  format(subDays(today,index), "yyyy-MM-dd");
         }).reverse();
