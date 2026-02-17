@@ -43,7 +43,7 @@ const TagFilter = () => {
         onClick={() => handleTagClick(t.tag)}
         className={cn(
           "flex shrink-0 items-center gap-2",
-          "h-10 px-4 rounded-sm text-sm font-medium",
+          "h-10 px-4 rounded-full text-sm font-medium",
           "border transition-colors",
           isActive
             ? "bg-primary text-primary-foreground border-primary"
