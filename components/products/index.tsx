@@ -64,7 +64,8 @@ const Products = async ({
 
               <div className="text-center pt-2 mt-2">
                 <h3 className="text-sm font-medium truncate">{p.product.title}</h3>
-                <p className="text-lg font-semibold">{formatCurrency(p.product.price)}</p>
+                <p className="text-lg text-primary font-semibold">{formatCurrency(p.product.price)}</p>
+                
               </div>
             </Link>
           );

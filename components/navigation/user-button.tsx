@@ -97,7 +97,10 @@ const UserButton = ({ user }: UserButtonProps) => {
             <DropdownMenuSeparator className="my-3" />
 
             <DropdownMenuItem
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={async () => {
+                await signOut({redirect: false});
+                window.location.href ="/"
+              }}
               className="cursor-pointer flex items-center gap-3 text-sm font-medium hover:text-red-500"
             >
               <LogOut className="w-6 h-6 hover:text-red-500" />
