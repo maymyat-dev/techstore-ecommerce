@@ -23,6 +23,7 @@ import { useFormContext } from "react-hook-form";
 
 type TiptapProps = {
   field: string;
+  onChange: (value: string) => void;
 };
 
 const INPUT_BASE_CLASSES =
@@ -41,7 +42,7 @@ const TOOLBAR_BUTTON_CLASSES =
   "p-2 rounded-md transition-colors hover:bg-gray-200 data-[state=on]:bg-blue-100 data-[state=on]:text-blue-600";
 const ICON_CLASSES = "w-4 h-4";
 
-const Tiptap = ({ field }: TiptapProps) => {
+const Tiptap = ({ field, onChange }: TiptapProps) => {
   const { setValue } = useFormContext();
 
   const editor = useEditor({
@@ -59,6 +60,7 @@ const Tiptap = ({ field }: TiptapProps) => {
     },
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
+      if (onChange) onChange(content);
       setValue("description", content, {
         shouldValidate: true,
         shouldDirty: true,

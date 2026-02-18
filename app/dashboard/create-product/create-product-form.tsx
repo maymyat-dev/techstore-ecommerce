@@ -6,14 +6,12 @@ import { useForm } from "react-hook-form";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,45 +24,46 @@ import Tiptap from "./tip-tap";
 import { useAction } from "next-safe-action/hooks";
 import { getSingleProduct, updateProduct } from "@/server/actions/products";
 import { toast } from "sonner";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 
 const CreateProductForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editIdParams = searchParams.get("edit_id") || null;
-  const [editProduct, setEditProduct] = useState<string>("");
 
-  const isProductExist = async (id: string) => { 
-    if (editIdParams) {
-      const res = await getSingleProduct(Number(id));
-      if (res.error) {
-        toast.error(res.error);
-        router.push("/dashboard/products");
-        return;
-      }
-      if (res.success) {
-        setEditProduct(res.data.title);
-        form.setValue("title", res.data.title);
-        form.setValue("description", res.data.description);
-        form.setValue("price", res.data.price);
-        form.setValue("id", res.data.id);
-      }
-    }
-  }
-
-
-  const form = useForm({
+    const form = useForm({
     resolver: zodResolver(ProductSchema),
-    defaultValues: {
+      defaultValues: {
+      id: undefined,
       title: "",
       description: "",
       price: 0,
     },
   });
 
-  const { execute, status, result } = useAction(updateProduct, {
+  const isProductExist = useCallback(async (id: string) => { 
+     const res = await getSingleProduct(Number(id));
+      if (res.error) {
+        toast.error(res.error);
+        router.push("/dashboard/products");
+        return;
+      }
+      if (res.success && res.data) {
+        form.reset({
+          id: res.data.id,
+          title: res.data.title,
+          description: res.data.description,
+          price: res.data.price,
+        })
+      }
+  }, [ router, form]);
+
+
+
+  const { execute, status } = useAction(updateProduct, {
     onSuccess: ({ data }) => {
 
       if (data?.error) {
@@ -86,7 +85,7 @@ const CreateProductForm = () => {
     if (editIdParams) {
       isProductExist(editIdParams);
     }
-  },[])
+  },[editIdParams, isProductExist]);
 
 
   return (
@@ -118,7 +117,7 @@ const CreateProductForm = () => {
                   <FormItem>
                     <FormLabel>Product Description</FormLabel>
                     <FormControl>
-                      <Tiptap field={field.value} />
+                      <Tiptap field={field.value} onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
