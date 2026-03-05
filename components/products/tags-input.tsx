@@ -13,7 +13,7 @@ const TagsInput = forwardRef<HTMLInputElement, TagsInputProps>(
 
     const addNewTag = () => {
       if (tagData) {
-        const newTagsData = new Set([...value, tagData]);
+        const newTagsData = new Set([...value, tagData]); //remove duplicates
         handleOnChange(Array.from(newTagsData));
         setTagData("");
       }
