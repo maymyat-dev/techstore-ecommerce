@@ -12,21 +12,19 @@ export async function POST(req: Request) {
     const body = await req.json();
     const messages = body.messages ?? [];
 
+    let foundProducts: any[] = [];
+
     const result = await generateText({
       model: google("gemini-2.5-flash"),
 
       messages,
+      // @ts-ignore
+      maxSteps: 5,
+      temperature: 0.7,
 
       system: `
-You are TechStore AI Assistant.
-
-Your job is to help users find products.
-
-Rules:
-- If the user asks about products, use the searchProducts tool.
-- Recommend products clearly.
-- Mention product name, price, and features.
-- Be friendly and concise.
+You are a TechStore AI assistant.
+When products are found, list their names and prices.
 `,
 
       tools: {
@@ -39,42 +37,60 @@ Rules:
           }),
 
           execute: async ({ query, maxPrice }) => {
-            try {
-              const conditions = [ilike(products.title, `%${query}%`)];
+             let searchQuery = query.toLowerCase();
 
-              if (maxPrice !== undefined) {
-                conditions.push(lte(products.price, maxPrice));
-              }
+             if (searchQuery.includes("tablet")) {
+               searchQuery = "ipad";
+             }
 
-              const results = await db
-                .select({
-                  id: products.id,
-                  title: products.title,
-                  description: products.description,
-                  price: products.price,
-                  color: productVariants.color,
-                  type: productVariants.productType,
-                })
-                .from(products)
-                .leftJoin(
-                  productVariants,
-                  eq(products.id, productVariants.productId),
-                )
-                .where(and(...conditions))
-                .limit(5);
-
-              return results;
-            } catch (error) {
-              console.error("DB search error:", error);
-              return [];
+             if (searchQuery.includes("phone")) {
+                searchQuery = "iphone";
             }
+
+            if (searchQuery.includes("laptop")) {
+              searchQuery = "macbook";
+            }
+            
+            let whereCondition;
+
+            if (maxPrice !== undefined) {
+              whereCondition = and(
+                ilike(products.title, `%${searchQuery}%`),
+                lte(products.price, maxPrice),
+              );
+            } else {
+              whereCondition = ilike(products.title, `%${searchQuery}%`);
+            }
+
+            const results = await db
+              .select({
+                id: products.id,
+                title: products.title,
+                description: products.description,
+                price: products.price,
+                color: productVariants.color,
+                type: productVariants.productType,
+              })
+              .from(products)
+              .leftJoin(
+                productVariants,
+                eq(products.id, productVariants.productId),
+              )
+              .where(whereCondition);
+
+            // console.log("DB results:", results);
+
+            foundProducts = results;
+
+            return results.map((p) => `${p.title} - $${p.price}`).join("\n");
           },
         }),
       },
     });
 
     return Response.json({
-      text: result.text ?? "I couldn't find any products. Please try again.",
+      text: result.text,
+      products: foundProducts,
     });
   } catch (error) {
     console.error("AI Chat Error:", error);
