@@ -1,8 +1,10 @@
 "use client";
 
-import { Send, X } from "lucide-react";
+import { Maximize2, Minimize2, Send, X } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
+import Draggable from "react-draggable";
+
 import chatbotIcon from "@/public/images/chatbot-icon.png";
 
 type Message = {
@@ -17,8 +19,13 @@ export default function AiChat() {
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
+  const nodeRef = useRef(null);
+
+  const toggleMaximize = () => setIsMaximized(!isMaximized);
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -41,11 +48,21 @@ export default function AiChat() {
     }
   }, [open]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const input = chatInput.trim();
-
     if (!input || loading) return;
 
     const userMessage: Message = {
@@ -63,33 +80,25 @@ export default function AiChat() {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ messages: updatedMessages }),
+        headers: { "Content-Type": "application/json" },
       });
 
-      if (!res.ok) {
-        throw new Error("API error");
-      }
-
       const data = await res.json();
-      console.log("AI Response Data:", data);
+
       const aiMessage: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
         content:
           data.text ||
-          (data.products
+          (data.products && data.products?.length > 0
             ? "Here are some products I found:"
-            : "I couldn't find any products."),
+            : "I'm sorry, I couldn't find any products matching your search.🥺 "),
         products: data.products || [],
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
-      console.error("Chat error:", error);
-
+    } catch {
       setMessages((prev) => [
         ...prev,
         {
@@ -108,154 +117,185 @@ export default function AiChat() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 group z-50"
+          className="fixed bottom-6 right-6 z-50 group"
         >
-          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500 via-primary-400 to-blue-500 blur-xl opacity-60 group-hover:opacity-90 transition"></span>
+          <div className="relative">
+            <span className="absolute inset-0 rounded-full bg-primary blur-xl opacity-60 group-hover:opacity-90 transition"></span>
 
-          <span className="absolute inset-0 rounded-full bg-primary-400 opacity-40 animate-ping"></span>
-
-          <div className="relative flex items-center justify-center rounded-full shadow-2xl hover:scale-110 transition-transform">
             <Image
               src={chatbotIcon}
-              alt="Chatbot Icon"
+              alt="chatbot"
               width={70}
               height={70}
-              className="rounded-full"
+              className="relative rounded-full shadow-xl hover:scale-110 transition"
             />
           </div>
-
-          <span className="absolute right-20 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">
-            Chat with AI
-          </span>
         </button>
       )}
 
       {open && (
-        <div className="fixed bottom-4 md:right-4 right-0 z-50 md:w-96 w-auto rounded-xl shadow-2xl flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between p-3 bg-primary text-white">
-            <div className="flex items-center gap-2">
-              <Image
-                src={chatbotIcon}
-                alt="AI"
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
-
-              <div className="flex flex-col leading-tight">
-                <span className="text-sm font-semibold">TechStore AI</span>
-                <span className="text-[10px] opacity-80">Online</span>
-              </div>
-            </div>
-
-            <X
-              className="w-5 h-5 cursor-pointer hover:scale-110 transition"
-              onClick={() => setOpen(false)}
-            />
-          </div>
-
-          <div className="h-82 overflow-y-auto p-4 space-y-3 bg-gray-50 dark:bg-gray-800 text-black">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"} gap-2`}
-              >
-                <div className="flex gap-2">
-                  <div>
-                    {message.role === "assistant" && (
-                      <Image
-                        src={chatbotIcon}
-                        alt="AI"
-                        width={35}
-                        height={35}
-                        className="rounded-full mt-1"
-                      />
-                    )}
-                  </div>
-                  <div
-                    className={`p-2 rounded-lg max-w-[85%] text-sm ${
-                      message.role === "user"
-                        ? "bg-primary text-white rounded-br-none"
-                        : "bg-white border text-gray-800 rounded-tl-none"
-                    }`}
-                  >
-                    {message.content}
-
-                    {message.products && message.products.length > 0 && (
-                      <div className="mt-3 grid grid-cols-1 gap-1 border-t pt-2">
-                        {message.products.map((product, idx) => (
-                          <div
-                            key={idx}
-                            className="bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-100 dark:border-gray-700 flex flex-col gap-1"
-                          >
-                            <span className="font-bold text-primary dark:text-blue-400 text-[13px]">
-                              {product.title}
-                            </span>
-                            <div
-                              className="text-[11px] text-gray-600 dark:text-gray-400 line-clamp-2"
-                              dangerouslySetInnerHTML={{
-                                __html: product.description,
-                              }}
-                            />
-                            <div className="flex justify-between items-center mt-1">
-                              <span className="text-orange-600 dark:text-orange-400 font-bold text-xs">
-                                ${product.price}
-                              </span>
-                              <span className="text-[10px] bg-gray-200 dark:bg-gray-800 dark:text-gray-300 px-1.5 py-0.5 rounded">
-                                {product.type}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {loading && (
+        <Draggable
+          handle=".chat-header"
+          nodeRef={nodeRef}
+          bounds="body"
+          disabled={isMobile}
+        >
+          <div
+            ref={nodeRef}
+            className={`fixed z-50 flex flex-col bg-white shadow-2xl overflow-hidden
+      ${
+        isMobile
+          ? "bottom-0 right-0 w-full h-[85vh] rounded-t-2xl"
+          : isMaximized
+            ? "bottom-6 right-6 w-[520px] h-[90vh] rounded-2xl"
+            : "bottom-6 right-6 w-[360px] h-[75vh] rounded-2xl"
+      }`}
+          >
+            <div className="chat-header flex items-center justify-between px-4 py-3 bg-primary text-white cursor-move">
               <div className="flex items-center gap-2">
                 <Image
                   src={chatbotIcon}
                   alt="AI"
-                  width={22}
-                  height={22}
+                  width={32}
+                  height={32}
                   className="rounded-full"
                 />
 
-                <div className="flex gap-1 p-2 bg-white border rounded-lg">
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+                <div>
+                  <p className="text-sm font-semibold">TechStore AI</p>
+                  <p className="text-[11px] opacity-80">Online</p>
                 </div>
               </div>
-            )}
 
-            <div ref={bottomRef} />
-          </div>
+              <div className="flex gap-3">
+                {isMaximized ? (
+                  <Minimize2
+                    size={18}
+                    className="cursor-pointer"
+                    onClick={toggleMaximize}
+                  />
+                ) : (
+                  <Maximize2
+                    size={18}
+                    className="cursor-pointer"
+                    onClick={toggleMaximize}
+                  />
+                )}
 
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-center gap-2 p-3 border-t bg-white dark:bg-gray-800"
-          >
-            <input
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Ask about products..."
-              className="flex-1 p-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+                <X
+                  size={18}
+                  className="cursor-pointer"
+                  onClick={() => setOpen(false)}
+                />
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.role === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div className="flex gap-2 max-w-[85%]">
+                    <div className="w-8 h-8 relative shrink-0">
+                      {message.role === "assistant" && (
+                        <Image
+                          src={chatbotIcon}
+                          alt="AI"
+                          className="rounded-full object-cove"
+                        />
+                      )}
+                    </div>
 
-            <button
-              type="submit"
-              disabled={loading || !chatInput.trim()}
-              className="flex items-center justify-center px-3 py-2 text-white rounded-md bg-primary hover:bg-primary/90 disabled:bg-gray-300"
+                    <div
+                      className={`px-3 py-2 rounded-xl text-sm shadow-sm text-black
+                ${
+                  message.role === "user"
+                    ? "bg-primary text-white rounded-br-none"
+                    : "bg-white border rounded-bl-none"
+                }`}
+                    >
+                      {message.content}
+
+                      {message.products && message.products.length > 0 && (
+                        <div className="mt-3 space-y-2 border-t pt-2">
+                          {message.products.map((product) => (
+                            <div
+                              key={product.id}
+                              className="p-2 rounded-lg border bg-gray-100 dark:bg-gray-800 text-xs"
+                            >
+                              <p className="font-semibold text-primary">
+                                {product.title}
+                              </p>
+
+                              <p
+                                className="text-gray-600 line-clamp-2"
+                                dangerouslySetInnerHTML={{
+                                  __html: product.description,
+                                }}
+                              />
+
+                              <div className="flex justify-between mt-1">
+                                <span className="text-orange-600 font-semibold">
+                                  ${product.price}
+                                </span>
+
+                                <span className="bg-gray-200 px-1.5 py-0.5 rounded text-[10px]">
+                                  {product.type}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {loading && (
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8">
+                    <Image
+                    src={chatbotIcon}
+                    alt="AI"
+                    className="rounded-full object-cover"
+                  />
+                  </div>
+
+
+                  <div className="flex gap-1 bg-white border rounded-lg px-2 py-1">
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+                  </div>
+                </div>
+              )}
+
+              <div ref={bottomRef} />
+            </div>
+
+            <form
+              onSubmit={handleSubmit}
+              className="flex items-center gap-2 p-3 border-t dark:bg-gray-800"
             >
-              <Send size={18} />
-            </button>
-          </form>
-        </div>
+              <input
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Ask about products..."
+                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
+              />
+
+              <button
+                disabled={!chatInput.trim() || loading}
+                className="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 disabled:bg-gray-300"
+              >
+                <Send size={18} />
+              </button>
+            </form>
+          </div>
+        </Draggable>
       )}
     </>
   );
