@@ -59,11 +59,21 @@ export default function AiChat() {
     };
   }, []);
 
+  const playSound = (url: string) => {
+    const audio = new Audio(url);
+    audio.volume = 0.5;
+    audio.currentTime = 0;
+    audio
+      .play()
+      .catch((err) => console.log("Audio waiting for user interaction..."));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const input = chatInput.trim();
     if (!input || loading) return;
+    playSound("/sounds/send.mp3");
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -98,6 +108,7 @@ export default function AiChat() {
       };
 
       setMessages((prev) => [...prev, aiMessage]);
+      playSound("/sounds/receive.mp3");
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -258,12 +269,11 @@ export default function AiChat() {
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8">
                     <Image
-                    src={chatbotIcon}
-                    alt="AI"
-                    className="rounded-full object-cover"
-                  />
+                      src={chatbotIcon}
+                      alt="AI"
+                      className="rounded-full object-cover"
+                    />
                   </div>
-
 
                   <div className="flex gap-1 bg-white border rounded-lg px-2 py-1">
                     <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
