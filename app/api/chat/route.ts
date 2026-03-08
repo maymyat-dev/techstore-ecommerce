@@ -1,11 +1,11 @@
 import { db } from "@/server";
-import { products, productVariants } from "@/server/schema";
+import { products, productVariants, variantImages } from "@/server/schema";
 
 import { google } from "@ai-sdk/google";
 import { generateText, tool } from "ai";
 
 import { z } from "zod";
-import { ilike, eq, and, lte } from "drizzle-orm";
+import { ilike, eq, and, lte, or } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
       system: `
 You are a TechStore AI assistant.
-When products are found, list their names and prices.
+When products are found, list their names, product types and prices.
 `,
 
       tools: {
@@ -34,33 +34,38 @@ When products are found, list their names and prices.
           inputSchema: z.object({
             query: z.string(),
             maxPrice: z.number().optional(),
+            type: z.string().optional(),
           }),
 
           execute: async ({ query, maxPrice }) => {
-             let searchQuery = query.toLowerCase();
+           let searchQuery = query.toLowerCase().trim();
 
-             if (searchQuery.includes("tablet")) {
-               searchQuery = "ipad";
-             }
+           searchQuery = searchQuery
+             .replace(/\bphone\b/g, "iphone")
+             .replace(/\btablet\b/g, "ipad")
+             .replace(/\blaptop\b/g, "macbook")
+              .replace(/\bmonitor\b/g, "imac")
+              .replace(/\bearphone\b/g, "airpods")
+              .replace(/\biwatch\b/g, "apple watch");
 
-             if (searchQuery.includes("phone")) {
-                searchQuery = "iphone";
-            }
+           const words = searchQuery.split(/\s+/).filter((w) => w.length > 0);
 
-            if (searchQuery.includes("laptop")) {
-              searchQuery = "macbook";
-            }
-            
-            let whereCondition;
+           let conditions = [];
 
-            if (maxPrice !== undefined) {
-              whereCondition = and(
-                ilike(products.title, `%${searchQuery}%`),
-                lte(products.price, maxPrice),
-              );
-            } else {
-              whereCondition = ilike(products.title, `%${searchQuery}%`);
-            }
+           words.forEach((word) => {
+             conditions.push(
+               or(
+                 ilike(products.title, `%${word}%`),
+                 ilike(productVariants.productType, `%${word}%`),
+               ),
+             );
+           });
+
+           if (maxPrice !== undefined) {
+             conditions.push(lte(products.price, maxPrice));
+           }
+
+           const whereCondition = and(...conditions);
 
             const results = await db
               .select({
@@ -68,21 +73,37 @@ When products are found, list their names and prices.
                 title: products.title,
                 description: products.description,
                 price: products.price,
+                variantId: productVariants.id,
                 color: productVariants.color,
                 type: productVariants.productType,
+                image_url: variantImages.image_url,
+                name: variantImages.name,
+                size: variantImages.size,
+                order: variantImages.order,
               })
               .from(products)
               .leftJoin(
                 productVariants,
+
                 eq(products.id, productVariants.productId),
               )
+              .leftJoin(
+                variantImages,
+                eq(productVariants.id, variantImages.variantId),
+              )
               .where(whereCondition);
+            
+          const uniqueResults = [
+            ...new Map(results.map((item) => [item.variantId, item])).values(),
+          ];
 
-            // console.log("DB results:", results);
+            console.log("DB results:", uniqueResults);
 
-            foundProducts = results;
+            foundProducts = uniqueResults;
 
-            return results.map((p) => `${p.title} - $${p.price}`).join("\n");
+            return uniqueResults
+              .map((p) => `${p.title} (${p.color}) - $${p.price}`)
+              .join("\n");
           },
         }),
       },

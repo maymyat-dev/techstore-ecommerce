@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 
 import chatbotIcon from "@/public/images/chatbot-icon.png";
+import { ProductCard } from "../products/product-card";
 
 type Message = {
   id: string;
@@ -230,33 +231,13 @@ export default function AiChat() {
                       {message.content}
 
                       {message.products && message.products.length > 0 && (
-                        <div className="mt-3 space-y-2 border-t pt-2">
+                        <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-4">
                           {message.products.map((product) => (
-                            <div
+                            <ProductCard
                               key={product.id}
-                              className="p-2 rounded-lg border bg-gray-100 dark:bg-gray-800 text-xs"
-                            >
-                              <p className="font-semibold text-primary">
-                                {product.title}
-                              </p>
-
-                              <p
-                                className="text-gray-600 line-clamp-2"
-                                dangerouslySetInnerHTML={{
-                                  __html: product.description,
-                                }}
-                              />
-
-                              <div className="flex justify-between mt-1">
-                                <span className="text-orange-600 font-semibold">
-                                  ${product.price}
-                                </span>
-
-                                <span className="bg-gray-200 px-1.5 py-0.5 rounded text-[10px]">
-                                  {product.type}
-                                </span>
-                              </div>
-                            </div>
+                              product={product}
+                              isChat={true}
+                            />
                           ))}
                         </div>
                       )}
