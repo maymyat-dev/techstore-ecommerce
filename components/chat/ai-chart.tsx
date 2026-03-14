@@ -7,6 +7,7 @@ import Draggable from "react-draggable";
 
 import chatbotIcon from "@/public/images/chatbot-icon.png";
 import { ProductCard } from "../products/product-card";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
   id: string;
@@ -22,6 +23,7 @@ export default function AiChat() {
   const [loading, setLoading] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [lastProduct, setLastProduct] = useState<any>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const nodeRef = useRef(null);
@@ -43,7 +45,7 @@ export default function AiChat() {
           id: crypto.randomUUID(),
           role: "assistant",
           content:
-            "Hello! I'm TechStore AI 🤖. Ask me about products, prices, or recommendations.",
+            "Hello! I'm TechStore AI 🤖. Ask me about products, prices, color, or description.",
         },
       ]);
     }
@@ -74,6 +76,7 @@ export default function AiChat() {
 
     const input = chatInput.trim();
     if (!input || loading) return;
+
     playSound("/sounds/send.mp3");
 
     const userMessage: Message = {
@@ -82,16 +85,28 @@ export default function AiChat() {
       content: input,
     };
 
-    const updatedMessages = [...messages, userMessage];
+    let contentForAI = input;
+    // const referWords = ["this", "this product", "that", "that product", "it"];
 
-    setMessages(updatedMessages);
+    if (input.toLowerCase().includes("explain") && lastProduct) {
+  contentForAI = `The user wants an explanation for ${lastProduct.title}. 
+  Context Specs: ${lastProduct.description}. 
+  IMPORTANT: Do not call the search tool. Answer with text only based on the context above.`;
+}
+
+    const updatedMessagesForAI = [
+      ...messages,
+      { ...userMessage, content: contentForAI },
+    ];
+
+    setMessages((prev) => [...prev, userMessage]);
     setChatInput("");
     setLoading(true);
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        body: JSON.stringify({ messages: updatedMessages }),
+        body: JSON.stringify({ messages: updatedMessagesForAI }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -109,6 +124,10 @@ export default function AiChat() {
       };
 
       setMessages((prev) => [...prev, aiMessage]);
+
+      if (data.products && data.products.length > 0) {
+        setLastProduct(data.products[0]);
+      }
       playSound("/sounds/receive.mp3");
     } catch {
       setMessages((prev) => [
@@ -157,7 +176,7 @@ export default function AiChat() {
             className={`fixed z-50 flex flex-col bg-white shadow-2xl overflow-hidden
       ${
         isMobile
-          ? "bottom-0 right-0 w-full h-[85vh] rounded-t-2xl"
+          ? "bottom-0 right-0 w-full h-[calc(100vh-80px)] rounded-t-2xl"
           : isMaximized
             ? "bottom-6 right-6 w-[520px] h-[90vh] rounded-2xl"
             : "bottom-6 right-6 w-[360px] h-[75vh] rounded-2xl"
@@ -215,20 +234,25 @@ export default function AiChat() {
                         <Image
                           src={chatbotIcon}
                           alt="AI"
-                          className="rounded-full object-cove"
+                          className="rounded-full object-cover"
                         />
                       )}
                     </div>
 
                     <div
-                      className={`px-3 py-2 rounded-xl text-sm shadow-sm text-black
+                      className={`px-3 py-2 rounded-xl text-sm shadow-sm
                 ${
                   message.role === "user"
                     ? "bg-primary text-white rounded-br-none"
-                    : "bg-white border rounded-bl-none"
+                    : "bg-white text-black border rounded-bl-none"
                 }`}
                     >
-                      {message.content}
+                      <div className="prose prose-sm max-w-none">
+                        <ReactMarkdown
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
 
                       {message.products && message.products.length > 0 && (
                         <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-4">

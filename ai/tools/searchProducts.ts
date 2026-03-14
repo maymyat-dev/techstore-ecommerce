@@ -1,0 +1,144 @@
+import { db } from "@/server";
+import { products, productVariants, variantImages } from "@/server/schema";
+
+import { tool } from "ai";
+
+import { z } from "zod";
+import { ilike, eq, and, lte, or, desc, gte } from "drizzle-orm";
+
+type ProductSearchResult = {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  variantId: number | null;
+  color: string | null;
+  type: string | null;
+  image_url: string | null;
+  name: string | null;
+  size: string | null;
+  order: number | null;
+};
+export const createSearchProductsTool = (
+  setProducts: (p: ProductSearchResult[]) => void,
+) => {
+  return tool({
+    description: "Search products from TechStore database",
+
+    inputSchema: z.object({
+      query: z.string(),
+      maxPrice: z.number().optional(),
+      minPrice: z.number().optional(),
+      type: z.string().optional(),
+    }),
+
+    execute: async ({ query, maxPrice, minPrice, type }) => {
+      let searchQuery = query.toLowerCase().trim();
+
+      searchQuery = searchQuery
+        .replace(/\bphone\b/g, "iphone")
+        .replace(/\btablet\b/g, "ipad")
+        .replace(/\blaptop\b/g, "macbook")
+        .replace(/\bmonitor\b/g, "imac")
+        .replace(/\bearphone\b/g, "airpods")
+        .replace(/\biwatch\b/g, "apple watch")
+        .replace(/\bwatch\b/g, "apple watch");
+
+      const words = searchQuery.split(/\s+/).filter((w) => w.length > 0);
+
+      const priceStopWords = [
+        "under",
+        "below",
+        "above",
+        "than",
+        "less",
+        "more",
+        "budget",
+        "around",
+        "price",
+      ];
+
+      const searchWords = words.filter((word) => {
+        const cleanWord = word.replace(/[$]/g, "");
+        const wordAsNumber = Number(cleanWord);
+
+        const isPriceStopWord = priceStopWords.includes(cleanWord);
+        const isPriceValue =
+          (!isNaN(wordAsNumber) &&
+            maxPrice !== undefined &&
+            wordAsNumber === maxPrice) ||
+          (minPrice !== undefined && wordAsNumber === minPrice);
+
+        return !isPriceStopWord && !isPriceValue;
+      });
+
+      let conditions = [];
+
+      if (type) {
+        conditions.push(ilike(productVariants.productType, `%${type}%`));
+      }
+
+      if (searchWords.length > 0) {
+        searchWords.forEach((word) => {
+          if (isNaN(Number(word)) && word !== type?.toLowerCase()) {
+            conditions.push(
+              or(
+                ilike(products.title, `%${word}%`),
+                ilike(productVariants.productType, `%${word}%`),
+              ),
+            );
+          }
+        });
+      }
+
+      if (maxPrice !== undefined) {
+        conditions.push(lte(products.price, maxPrice));
+      }
+
+      if (minPrice !== undefined) {
+        conditions.push(gte(products.price, minPrice));
+      }
+
+      const whereCondition =
+        conditions.length > 0 ? and(...conditions) : undefined;
+
+      const results = await db
+        .select({
+          id: products.id,
+          title: products.title,
+          description: products.description,
+          price: products.price,
+          variantId: productVariants.id,
+          color: productVariants.color,
+          type: productVariants.productType,
+          image_url: variantImages.image_url,
+          name: variantImages.name,
+          size: variantImages.size,
+          order: variantImages.order,
+        })
+        .from(products)
+        .leftJoin(productVariants, eq(products.id, productVariants.productId))
+        .leftJoin(
+          variantImages,
+          eq(productVariants.id, variantImages.variantId),
+        )
+        .where(whereCondition)
+        .orderBy(desc(products.createdAt))
+        .limit(20);
+
+      const uniqueResults = [
+        ...new Map(results.map((item) => [item.variantId, item])).values(),
+      ];
+
+      setProducts(uniqueResults);
+
+      console.log("DB results:", uniqueResults);
+
+      return uniqueResults.length > 0
+        ? uniqueResults
+            .map((p) => `${p.title} (${p.color}) - $${p.price}. Description: ${p.description}`)
+            .join("\n")
+        : "No products found matching your search.";
+    },
+  });
+};

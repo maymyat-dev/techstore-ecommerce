@@ -46,7 +46,7 @@ export const ProductCard = ({ product, isChat = false }: ProductCardProps) => {
           className="object-contain p-4 transition-transform duration-500 group-hover:scale-110"
         />
         {!isChat && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         )}
       </div>
 
