@@ -18,8 +18,6 @@ export async function POST(req: Request) {
       model: google("gemini-2.5-flash"),
 
       messages,
-      // @ts-ignore
-      maxSteps: 5,
       temperature: 0.7,
 
       system: techStoreSystemPrompt,

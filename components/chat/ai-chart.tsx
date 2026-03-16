@@ -85,19 +85,15 @@ export default function AiChat() {
       content: input,
     };
 
-    let contentForAI = input;
-    // const referWords = ["this", "this product", "that", "that product", "it"];
+    const historyWithContext = messages.map((msg) => {
+      if (msg.role === "assistant" && msg.products && msg.products.length > 0) {
+        const hiddenData = `\n\n[SYSTEM_CONTEXT: Found ${msg.products.length} products. Details: ${JSON.stringify(msg.products)}]`;
+        return { ...msg, content: msg.content + hiddenData };
+      }
+      return msg;
+    });
 
-    if (input.toLowerCase().includes("explain") && lastProduct) {
-  contentForAI = `The user wants an explanation for ${lastProduct.title}. 
-  Context Specs: ${lastProduct.description}. 
-  IMPORTANT: Do not call the search tool. Answer with text only based on the context above.`;
-}
-
-    const updatedMessagesForAI = [
-      ...messages,
-      { ...userMessage, content: contentForAI },
-    ];
+    const finalMessagesForAI = [...historyWithContext, userMessage];
 
     setMessages((prev) => [...prev, userMessage]);
     setChatInput("");
@@ -106,7 +102,7 @@ export default function AiChat() {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        body: JSON.stringify({ messages: updatedMessagesForAI }),
+        body: JSON.stringify({ messages: finalMessagesForAI }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -248,10 +244,7 @@ export default function AiChat() {
                 }`}
                     >
                       <div className="prose prose-sm max-w-none">
-                        <ReactMarkdown
-                        >
-                          {message.content}
-                        </ReactMarkdown>
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
 
                       {message.products && message.products.length > 0 && (

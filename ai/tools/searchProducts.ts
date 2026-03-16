@@ -130,15 +130,26 @@ export const createSearchProductsTool = (
         ...new Map(results.map((item) => [item.variantId, item])).values(),
       ];
 
+      const aiResults = uniqueResults.map((p) => ({
+        title: p.title,
+        price: p.price,
+        color: p.type,
+        description: p.description
+          .replace(/<[^>]*>/g, " ") 
+          .replace(/\s+/g, " ")
+          .trim(),
+      }));
+
       setProducts(uniqueResults);
+      
+      console.log("DB results found:", aiResults);
 
-      console.log("DB results:", uniqueResults);
-
-      return uniqueResults.length > 0
-        ? uniqueResults
-            .map((p) => `${p.title} (${p.color}) - $${p.price}. Description: ${p.description}`)
-            .join("\n")
-        : "No products found matching your search.";
+      return {
+        success: aiResults.length > 0,
+        count: aiResults.length,
+        products: aiResults,
+        message: aiResults.length === 0 ? "No products found." : "Products retrieved successfully."
+      };
     },
   });
 };
