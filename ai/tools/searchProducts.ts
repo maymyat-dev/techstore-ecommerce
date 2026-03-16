@@ -45,6 +45,7 @@ export const createSearchProductsTool = (
         .replace(/\bwatch\b/g, "apple watch");
 
       const words = searchQuery.split(/\s+/).filter((w) => w.length > 0);
+      const modelNumber = words.find((word) => /^\d+$/.test(word));
 
       const priceStopWords = [
         "under",
@@ -68,8 +69,10 @@ export const createSearchProductsTool = (
             maxPrice !== undefined &&
             wordAsNumber === maxPrice) ||
           (minPrice !== undefined && wordAsNumber === minPrice);
+        
+        const isModelNumber = cleanWord === modelNumber;
 
-        return !isPriceStopWord && !isPriceValue;
+        return !isPriceStopWord && !isPriceValue && !isModelNumber;
       });
 
       let conditions = [];
@@ -80,7 +83,7 @@ export const createSearchProductsTool = (
 
       if (searchWords.length > 0) {
         searchWords.forEach((word) => {
-          if (isNaN(Number(word)) && word !== type?.toLowerCase()) {
+          if (word !== type?.toLowerCase()) {
             conditions.push(
               or(
                 ilike(products.title, `%${word}%`),
@@ -90,6 +93,10 @@ export const createSearchProductsTool = (
           }
         });
       }
+
+      if (modelNumber) {
+        conditions.push(ilike(products.title, `%iphone ${modelNumber}%`));
+       }
 
       if (maxPrice !== undefined) {
         conditions.push(lte(products.price, maxPrice));

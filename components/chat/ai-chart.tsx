@@ -23,7 +23,6 @@ export default function AiChat() {
   const [loading, setLoading] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [lastProduct, setLastProduct] = useState<any>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const nodeRef = useRef(null);
@@ -120,10 +119,6 @@ export default function AiChat() {
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-
-      if (data.products && data.products.length > 0) {
-        setLastProduct(data.products[0]);
-      }
       playSound("/sounds/receive.mp3");
     } catch {
       setMessages((prev) => [
