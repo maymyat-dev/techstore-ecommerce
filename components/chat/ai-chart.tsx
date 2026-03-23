@@ -8,6 +8,7 @@ import Draggable from "react-draggable";
 import chatbotIcon from "@/public/images/chatbot-icon.png";
 import { ProductCard } from "../products/product-card";
 import ReactMarkdown from "react-markdown";
+import SuggestionGrid from "./suggestion-grid";
 
 type Message = {
   id: string;
@@ -70,10 +71,7 @@ export default function AiChat() {
       .catch((err) => console.log("Audio waiting for user interaction..."));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const input = chatInput.trim();
+  const sendMessage = async (input: string) => {
     if (!input || loading) return;
 
     playSound("/sounds/send.mp3");
@@ -132,7 +130,18 @@ export default function AiChat() {
     } finally {
       setLoading(false);
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage(chatInput.trim())
+    
   };
+
+  const handleSuggestionClick = (value: string) => {
+    setChatInput(value);
+    sendMessage(value);
+  }
 
   return (
     <>
@@ -270,6 +279,12 @@ export default function AiChat() {
                   </div>
                 </div>
               ))}
+
+              {
+                messages.length === 1 && !loading && (
+                  <SuggestionGrid onSelect={handleSuggestionClick} />
+                )
+              }
 
               {loading && (
                 <div className="flex items-center gap-2">
