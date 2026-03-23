@@ -4,7 +4,7 @@ import { products, productVariants, variantImages } from "@/server/schema";
 import { tool } from "ai";
 
 import { z } from "zod";
-import { ilike, eq, and, lte, or, desc, gte } from "drizzle-orm";
+import { ilike, eq, and, lte, or, desc, gte, notIlike } from "drizzle-orm";
 
 type ProductSearchResult = {
   id: number;
@@ -69,7 +69,7 @@ export const createSearchProductsTool = (
             maxPrice !== undefined &&
             wordAsNumber === maxPrice) ||
           (minPrice !== undefined && wordAsNumber === minPrice);
-        
+
         const isModelNumber = cleanWord === modelNumber;
 
         return !isPriceStopWord && !isPriceValue && !isModelNumber;
@@ -93,11 +93,30 @@ export const createSearchProductsTool = (
           }
         });
       }
-
       if (modelNumber) {
-        conditions.push(ilike(products.title, `%iphone ${modelNumber}%`));
-       }
+        const isPro = searchQuery.includes("pro");
+        const isMax = searchQuery.includes("max");
+        const isPlus = searchQuery.includes("plus");
 
+        if (!isPro && !isMax && !isPlus) {
+          conditions.push(ilike(products.title, `iphone ${modelNumber}`));
+        } else if (isPro && isMax) {
+          conditions.push(
+            ilike(products.title, `%iphone ${modelNumber} pro max%`),
+          );
+        } else if (isPro) {
+          conditions.push(
+            and(
+              ilike(products.title, `%iphone ${modelNumber} pro%`),
+              notIlike(products.title, `%pro max%`),
+            ),
+          );
+        } else if (isPlus) {
+          conditions.push(
+            ilike(products.title, `%iphone ${modelNumber} plus%`),
+          );
+        }
+      }
       if (maxPrice !== undefined) {
         conditions.push(lte(products.price, maxPrice));
       }
@@ -141,21 +160,25 @@ export const createSearchProductsTool = (
         title: p.title,
         price: p.price,
         color: p.type,
+        image: p.image_url,
         description: p.description
-          .replace(/<[^>]*>/g, " ") 
+          .replace(/<[^>]*>/g, " ")
           .replace(/\s+/g, " ")
           .trim(),
       }));
 
       setProducts(uniqueResults);
-      
+
       console.log("DB results found:", aiResults);
 
       return {
         success: aiResults.length > 0,
         count: aiResults.length,
         products: aiResults,
-        message: aiResults.length === 0 ? "No products found." : "Products retrieved successfully."
+        message:
+          aiResults.length === 0
+            ? "No products found."
+            : "Products retrieved successfully.",
       };
     },
   });

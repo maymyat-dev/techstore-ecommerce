@@ -238,9 +238,22 @@ export default function AiChat() {
                     : "bg-white text-black border rounded-bl-none"
                 }`}
                     >
-                      <div className="prose prose-sm max-w-none">
-                        <ReactMarkdown>{message.content}</ReactMarkdown>
-                      </div>
+                      <ReactMarkdown
+                        components={{
+                          img: ({ node, ...props }) => (
+                            <img
+                              {...props}
+                              className="max-w-[200px] h-auto rounded-lg my-2 mx-auto"
+                              alt={props.alt || "product image"}
+                            />
+                          ),
+                          p: ({ children }) => (
+                            <p className="mb-2 last:mb-0">{children}</p>
+                          ),
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
 
                       {message.products && message.products.length > 0 && (
                         <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-4">
