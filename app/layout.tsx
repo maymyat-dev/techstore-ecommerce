@@ -26,16 +26,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body className={`antialiased`} suppressHydrationWarning>
-        <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <AdminNav/>
-          <AppNav/>
+       
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>
             <NextTopLoader color="#8E51FF" showSpinner={false} />
-            {children}
-            <AiChat />
-          <Toaster position="top-center" richColors closeButton />
+            <AdminNav/>
+            <AppNav/>
+            
+            <main>
+              {children}
+            </main>
+            {/* <AiChat /> */}
+            <Toaster position="top-center" richColors closeButton />
+            </AuthProvider>
         </ThemeProvider>
-        </AuthProvider>
+        
       </body>
     </html>
   );

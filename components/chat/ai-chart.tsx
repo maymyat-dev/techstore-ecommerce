@@ -168,7 +168,7 @@ export default function AiChat() {
         <Draggable
           handle=".chat-header"
           nodeRef={nodeRef}
-          bounds="body"
+          bounds="parent"
           disabled={isMobile}
         >
           <div
