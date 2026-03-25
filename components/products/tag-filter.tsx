@@ -47,7 +47,7 @@ const TagFilter = () => {
           "border transition-colors",
           isActive
             ? "bg-primary text-primary-foreground border-primary"
-            : "dark:bg-gray-800 text-foreground border-border"
+            : "dark:bg-card text-foreground border-border"
         )}
       >
         <Icon className="h-4 w-4" />

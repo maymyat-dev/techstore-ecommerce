@@ -49,7 +49,7 @@ const ImageSlider = ({ variants }: ImageSliderProps) => {
             v.variantImages.map((img, index) => (
               <CarouselItem
                 key={index}
-                className="flex items-center justify-center bg-white dark:bg-gray-800 rounded-sm shadow-lg transition-shadow duration-200"
+                className="flex items-center justify-center bg-white dark:bg-card rounded-sm shadow-lg transition-shadow duration-200"
               >
                 {img.image_url && (
                   <Image

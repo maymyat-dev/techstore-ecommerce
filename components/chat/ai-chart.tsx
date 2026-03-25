@@ -309,7 +309,7 @@ export default function AiChat() {
 
             <form
               onSubmit={handleSubmit}
-              className="flex items-center gap-2 p-3 border-t dark:bg-gray-800"
+              className="flex items-center gap-2 p-3 border-t dark:bg-card"
             >
               <input
                 value={chatInput}

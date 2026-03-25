@@ -32,7 +32,7 @@ export const ProductCard = ({ product, isChat = false }: ProductCardProps) => {
           price: price,
         },
       }}
-      className={`group bg-white dark:bg-gray-800 rounded-2xl block border border-neutral-100 dark:border-neutral-800 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 
+      className={`group bg-white dark:bg-card rounded-2xl block border border-neutral-100 dark:border-neutral-800 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 
         ${isChat ? "p-2" : "p-3"}`}
     >
       <div

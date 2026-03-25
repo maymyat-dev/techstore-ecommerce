@@ -4,7 +4,7 @@ import { AppleIcon } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className=" bg-white dark:bg-slate-800 border-t  border-t-slate-60">
+    <footer className=" bg-white dark:bg-card border-t  border-t-slate-60">
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid gap-10 md:grid-cols-3">
           <div className="space-y-4">

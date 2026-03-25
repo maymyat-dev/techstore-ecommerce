@@ -44,7 +44,7 @@ export default function WhyShopWithUsSection() {
             return (
               <li
                 key={index}
-                className="group rounded-sm bg-white dark:bg-gray-800 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                className="group rounded-xl bg-white dark:bg-card p-6 shadow-sm border border-black/5 dark:border-white/10 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/10"
               >
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Icon className="h-6 w-6" />

@@ -11,7 +11,7 @@ const AppNav = async() => {
 
 
   return (
-      <div className='w-full h-16 border-b border-b-slate-60  bg-white dark:bg-slate-800 flex items-center justify-between px-4 mb-10'>
+      <div className='w-full h-16 border-b border-border bg-white/80 dark:bg-card backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-4 mb-10'>
       <NavLogo />
       <div className='flex gap-4 items-center'>
         <CartBtn/>
