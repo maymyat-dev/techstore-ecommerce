@@ -14,7 +14,6 @@ const ProviderLogin = () => {
         className="w-full flex items-center justify-center gap-2"
         onClick={() =>
           signIn("google", {
-            redirect: false,
             callbackUrl: "/",
           })
         }
@@ -28,7 +27,6 @@ const ProviderLogin = () => {
         className="w-full flex items-center justify-center gap-2"
         onClick={() =>
           signIn("github", {
-            redirect: false,
             callbackUrl: "/",
           })
         }
