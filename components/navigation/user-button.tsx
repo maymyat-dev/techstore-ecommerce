@@ -23,10 +23,9 @@ type UserButtonProps = {
 };
 
 const UserButton = ({ user }: UserButtonProps) => {
-  const router = useRouter();
   return (
     <div className="flex items-center">
-      <div className="hidden md:block">
+      <div className="">
         {user?.email && (
         <span className="mr-3 text-sm text-muted-foreground">
           👋 Welcome,{" "}
@@ -71,28 +70,6 @@ const UserButton = ({ user }: UserButtonProps) => {
                 <p className="text-xs opacity-90">{user.email}</p>
               </div>
             </div>
-
-            <DropdownMenuSeparator className="my-3" />
-
-            <DropdownMenuItem asChild >
-              <Link
-                href="/dashboard/orders"
-                className="flex items-center gap-3 text-sm font-medium text-foreground hover:text-primary transition-all duration-200 group"
-              >
-                <Truck className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all duration-300 group-hover:translate-x-1" />
-                <span>My Orders</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild >
-              <Link
-                href="/dashboard/settings"
-                className="flex items-center gap-3 text-sm font-medium text-foreground hover:text-primary transition-all duration-200 group"
-              >
-                <Settings className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-transform duration-300 group-hover:rotate-180" />
-                <span>Settings</span>
-              </Link>
-            </DropdownMenuItem>
 
             <DropdownMenuSeparator className="my-3" />
 

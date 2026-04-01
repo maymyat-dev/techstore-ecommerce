@@ -8,7 +8,7 @@ import AppNav from "@/components/navigation/app-nav";
 import { AuthProvider } from "@/components/auth-provider";
 import AdminNav from "@/components/navigation/admin-nav";
 import NextTopLoader from 'nextjs-toploader';
-import AiChat from "@/components/chat/ai-chart";
+import AiChat from "@/components/chat/ai-chat";
 
 export const metadata: Metadata = {
   title: "TechStore",

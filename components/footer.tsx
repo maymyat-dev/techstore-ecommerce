@@ -24,7 +24,7 @@ const Footer = () => {
             <h4 className="mb-4 text-sm font-semibold">Support</h4>
             <ul className="space-y-3 text-sm opacity-70">
               <li>
-                <Link href="/help" className="transition hover:text-primary">
+                <Link href="/support" className="transition hover:text-primary">
                   Help Center
                 </Link>
               </li>
@@ -34,7 +34,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="transition hover:text-primary">
+                <Link href="/support" className="transition hover:text-primary">
                   Shipping & Returns
                 </Link>
               </li>

@@ -148,7 +148,7 @@ export default function AiChat() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 group"
+          className="fixed bottom-6 right-6 z-50 group md:block hidden"
         >
           <div className="relative">
             <span className="absolute inset-0 rounded-full bg-primary blur-xl opacity-60 group-hover:opacity-90 transition"></span>
