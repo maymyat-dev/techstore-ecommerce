@@ -31,7 +31,7 @@ const MobileNav = ({ user }: { user: any }) => {
       </div>
 
       <div className="md:hidden fixed bottom-0 left-0 w-full z-50 px-4 pb-4">
-        <div className="relative flex items-center justify-between rounded-4xl px-6 py-3 border bg-white/90 dark:bg-card/90 backdrop-blur-xl shadow-2xl">
+        <div className="relative flex items-center justify-between rounded-4xl px-6 border bg-white/90 dark:bg-card/90 backdrop-blur-xl shadow-2xl">
           
           <div className="flex flex-1 justify-around items-center">
             {menus.slice(0, 2).map((menu, index) => (
@@ -42,7 +42,7 @@ const MobileNav = ({ user }: { user: any }) => {
             ))}
           </div>
 
-          <div className="relative -top-8">
+          <div className="relative -top-6">
              <Link href="/ai-assistant">
                 <div className="bg-primary p-4 rounded-full shadow-lg shadow-primary/40 border-4 border-background animate-pulse-slow">
                    <BotIcon className="text-white" size={28} />

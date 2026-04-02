@@ -32,7 +32,6 @@ export default function RootLayout({
           <AppNav/>
             <NextTopLoader color="#8E51FF" showSpinner={false} />
             {children}
-            <AiChat />
           <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
         </AuthProvider>

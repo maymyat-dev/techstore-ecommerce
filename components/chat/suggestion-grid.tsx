@@ -22,7 +22,7 @@ type SuggestionButtonProps = {
 };
 const SuggestionGrid = ({ onSelect }: SuggestionButtonProps) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+    <div className="flex flex-wrap gap-2 justify-center mt-4 px-4">
       {items.map((item) => (
         <SuggestionButton
           key={item.id}

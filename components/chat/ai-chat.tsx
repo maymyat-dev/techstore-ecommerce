@@ -1,11 +1,8 @@
 "use client";
 
-import { Maximize2, Minimize2, Send, X } from "lucide-react";
-import Image from "next/image";
+import { BotIcon, Send } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import Draggable from "react-draggable";
 
-import chatbotIcon from "@/public/images/chatbot-icon.png";
 import { ProductCard } from "../products/product-card";
 import ReactMarkdown from "react-markdown";
 import SuggestionGrid from "./suggestion-grid";
@@ -18,63 +15,65 @@ type Message = {
 };
 
 export default function AiChat() {
-  const [open, setOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
-  const nodeRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const toggleMaximize = () => setIsMaximized(!isMaximized);
+  const sendAudioRef = useRef<HTMLAudioElement | null>(null);
+  const receiveAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    sendAudioRef.current = new Audio("/sounds/send.mp3");
+    receiveAudioRef.current = new Audio("/sounds/receive.mp3");
+  }, []);
+
+  const playSound = (type: "send" | "receive") => {
+    const audio =
+      type === "send" ? sendAudioRef.current : receiveAudioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  };
+
+  const scrollToBottom = (force = false) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      120;
+
+    if (force || isNearBottom) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, loading]);
+  }, [messages]);
 
   useEffect(() => {
-    if (open && messages.length === 0) {
-      setMessages([
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content:
-            "Hello! I'm TechStore AI 🤖. Ask me about products, prices, color, or description.",
-        },
-      ]);
-    }
-  }, [open]);
+    if (loading) scrollToBottom(true);
+  }, [loading]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    setMessages([
+      {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content:
+          "Hello! I'm TechStore AI 🤖. Ask me about products, prices, color, or description.",
+      },
+    ]);
   }, []);
-
-  const playSound = (url: string) => {
-    const audio = new Audio(url);
-    audio.volume = 0.5;
-    audio.currentTime = 0;
-    audio
-      .play()
-      .catch((err) => console.log("Audio waiting for user interaction..."));
-  };
 
   const sendMessage = async (input: string) => {
     if (!input || loading) return;
 
-    playSound("/sounds/send.mp3");
+    playSound("send");
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -83,14 +82,18 @@ export default function AiChat() {
     };
 
     const historyWithContext = messages.map((msg) => {
-      if (msg.role === "assistant" && msg.products && msg.products.length > 0) {
-        const hiddenData = `\n\n[SYSTEM_CONTEXT: Found ${msg.products.length} products. Details: ${JSON.stringify(msg.products)}]`;
-        return { ...msg, content: msg.content + hiddenData };
+      if (msg.role === "assistant" && msg.products?.length) {
+        return {
+          ...msg,
+          content:
+            msg.content +
+            `\n\n[SYSTEM_CONTEXT: ${JSON.stringify(msg.products)}]`,
+        };
       }
       return msg;
     });
 
-    const finalMessagesForAI = [...historyWithContext, userMessage];
+    const finalMessages = [...historyWithContext, userMessage];
 
     setMessages((prev) => [...prev, userMessage]);
     setChatInput("");
@@ -99,7 +102,7 @@ export default function AiChat() {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        body: JSON.stringify({ messages: finalMessagesForAI }),
+        body: JSON.stringify({ messages: finalMessages }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -110,224 +113,162 @@ export default function AiChat() {
         role: "assistant",
         content:
           data.text ||
-          (data.products && data.products?.length > 0
+          (data.products?.length
             ? "Here are some products I found:"
-            : "I'm sorry, I couldn't find any products matching your search.🥺 "),
+            : "Sorry, I couldn't find anything 😢"),
         products: data.products || [],
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-      playSound("/sounds/receive.mp3");
+      playSound("receive");
     } catch {
       setMessages((prev) => [
         ...prev,
         {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: "⚠️ Server error. Please try again.",
+          content: "⚠️ Now limit reached, please try again later. Thank you for your patience.",
         },
       ]);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    sendMessage(chatInput.trim())
-    
+    sendMessage(chatInput.trim());
   };
 
   const handleSuggestionClick = (value: string) => {
     setChatInput(value);
     sendMessage(value);
-  }
+  };
 
   return (
-    <>
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 group md:block hidden"
+    <div className="max-w-7xl mx-auto md:h-dvh h-100 flex flex-col bg-gray-50 dark:bg-gray-900 md:-mt-10 mt-0">
+      <div ref={containerRef} className="flex-1 overflow-y-auto">
+        <div
+          className="space-y-6 pt-6 px-6
+          pb-[calc(env(safe-area-inset-bottom)+16px)]"
         >
-          <div className="relative">
-            <span className="absolute inset-0 rounded-full bg-primary blur-xl opacity-60 group-hover:opacity-90 transition"></span>
-
-            <Image
-              src={chatbotIcon}
-              alt="chatbot"
-              width={70}
-              height={70}
-              className="relative rounded-full shadow-xl hover:scale-110 transition"
-            />
-          </div>
-        </button>
-      )}
-
-      {open && (
-        <Draggable
-          handle=".chat-header"
-          nodeRef={nodeRef}
-          bounds="parent"
-          disabled={isMobile}
-        >
-          <div
-            ref={nodeRef}
-            className={`fixed z-50 flex flex-col bg-white shadow-2xl overflow-hidden
-      ${
-        isMobile
-          ? "bottom-0 right-0 w-full h-[calc(100vh-80px)] rounded-t-2xl"
-          : isMaximized
-            ? "bottom-6 right-6 w-[520px] h-[90vh] rounded-2xl"
-            : "bottom-6 right-6 w-[360px] h-[75vh] rounded-2xl"
-      }`}
-          >
-            <div className="chat-header flex items-center justify-between px-4 py-3 bg-primary text-white cursor-move">
-              <div className="flex items-center gap-2">
-                <Image
-                  src={chatbotIcon}
-                  alt="AI"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
-
-                <div>
-                  <p className="text-sm font-semibold">TechStore AI</p>
-                  <p className="text-[11px] opacity-80">Online</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                {isMaximized ? (
-                  <Minimize2
-                    size={18}
-                    className="cursor-pointer"
-                    onClick={toggleMaximize}
-                  />
-                ) : (
-                  <Maximize2
-                    size={18}
-                    className="cursor-pointer"
-                    onClick={toggleMaximize}
-                  />
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`flex gap-3 w-full max-w-[90%] md:max-w-[80%] ${
+                  message.role === "user" ? "flex-row-reverse" : "items-start"
+                }`}
+              >
+                {message.role === "assistant" && (
+                  <div className="shrink-0 bg-[#E0E7FF] rounded-full md:p-3 p-2 mt-1">
+                    <BotIcon size={20} className="text-primary" />
+                  </div>
                 )}
 
-                <X
-                  size={18}
-                  className="cursor-pointer"
-                  onClick={() => setOpen(false)}
-                />
+                <div className="flex flex-col gap-2 min-w-0 flex-1">
+                  <div
+                    className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm border w-fit ${
+                      message.role === "user"
+                        ? "bg-primary text-white border-primary rounded-br-none ml-auto"
+                        : "bg-white dark:bg-card border-gray-100 dark:border-neutral-800 rounded-tl-none"
+                    }`}
+                  >
+                    <ReactMarkdown
+                      components={{
+                        img: ({ node, ...props }) => (
+                          <img
+                            {...props}
+                            className="max-w-60 md:max-w-100 h-auto rounded-xl my-3 shadow-md border border-neutral-100 dark:border-neutral-800"
+                            alt={props.alt || "Product Image"}
+                          />
+                        ),
+                        p: ({ children }) => (
+                          <p className="mb-2 last:mb-0 leading-relaxed text-sm md:text-base">
+                            {children}
+                          </p>
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
+
+                  {message.products && message.products.length > 0 && (
+                    <div className="w-full overflow-hidden">
+                      <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+                        {message.products.map((product) => (
+                          <div
+                            key={product.id}
+                            className="w-50 md:w-60 shrink-0 transition-transform active:scale-95"
+                          >
+                            <ProductCard product={product} isChat />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div className="flex gap-2 max-w-[85%]">
-                    <div className="w-8 h-8 relative shrink-0">
-                      {message.role === "assistant" && (
-                        <Image
-                          src={chatbotIcon}
-                          alt="AI"
-                          className="rounded-full object-cover"
-                        />
-                      )}
-                    </div>
+          ))}
 
-                    <div
-                      className={`px-3 py-2 rounded-xl text-sm shadow-sm
-                ${
-                  message.role === "user"
-                    ? "bg-primary text-white rounded-br-none"
-                    : "bg-white text-black border rounded-bl-none"
-                }`}
-                    >
-                      <ReactMarkdown
-                        components={{
-                          img: ({ node, ...props }) => (
-                            <img
-                              {...props}
-                              className="max-w-[200px] h-auto rounded-lg my-2 mx-auto"
-                              alt={props.alt || "product image"}
-                            />
-                          ),
-                          p: ({ children }) => (
-                            <p className="mb-2 last:mb-0">{children}</p>
-                          ),
-                        }}
-                      >
-                        {message.content}
-                      </ReactMarkdown>
+          {messages.length === 1 && !loading && (
+            <SuggestionGrid onSelect={handleSuggestionClick} />
+          )}
 
-                      {message.products && message.products.length > 0 && (
-                        <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-4">
-                          {message.products.map((product) => (
-                            <ProductCard
-                              key={product.id}
-                              product={product}
-                              isChat={true}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
+          {loading && (
+            <div className="flex justify-start">
+              <div className="flex gap-3 max-w-[85%]">
+                <div className="shrink-0 bg-[#E0E7FF] rounded-full md:p-3 p-2 mt-1">
+                  <BotIcon size={20} className="text-primary" />
+                </div>
+
+                <div className="px-4 py-3 bg-white dark:bg-card border rounded-2xl rounded-tl-none shadow-sm">
+                  <div className="flex gap-1.5 items-center h-5">
+                    <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
                   </div>
                 </div>
-              ))}
-
-              {
-                messages.length === 1 && !loading && (
-                  <SuggestionGrid onSelect={handleSuggestionClick} />
-                )
-              }
-
-              {loading && (
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8">
-                    <Image
-                      src={chatbotIcon}
-                      alt="AI"
-                      className="rounded-full object-cover"
-                    />
-                  </div>
-
-                  <div className="flex gap-1 bg-white border rounded-lg px-2 py-1">
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></span>
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-300"></span>
-                  </div>
-                </div>
-              )}
-
-              <div ref={bottomRef} />
+              </div>
             </div>
+          )}
 
-            <form
-              onSubmit={handleSubmit}
-              className="flex items-center gap-2 p-3 border-t dark:bg-card"
+          <div ref={bottomRef} />
+        </div>
+      </div>
+
+      <div
+        className="fixed md:bottom-0 bottom-20 left-0 w-full z-40 
+     bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t"
+      >
+        <div
+          className="max-w-4xl mx-auto px-4 pt-3 
+          pb-[calc(env(safe-area-inset-bottom)+16px)]"
+        >
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center gap-2 bg-gray-100 dark:bg-card border rounded-full px-2 py-1.5 shadow-sm focus-within:ring-2 focus-within:ring-primary/50"
+          >
+            <input
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Ask about products..."
+              className="flex-1 bg-transparent px-4 py-2 text-sm outline-none"
+            />
+
+            <button
+              disabled={!chatInput.trim() || loading}
+              className="bg-primary text-white p-2.5 rounded-full disabled:opacity-50"
             >
-              <input
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Ask about products..."
-                className="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
-              />
-
-              <button
-                disabled={!chatInput.trim() || loading}
-                className="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 disabled:bg-gray-300"
-              >
-                <Send size={18} />
-              </button>
-            </form>
-          </div>
-        </Draggable>
-      )}
-    </>
+              <Send size={18} />
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 }
