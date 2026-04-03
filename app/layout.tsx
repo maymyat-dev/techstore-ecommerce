@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import AppNav from "@/components/navigation/app-nav";
 import { AuthProvider } from "@/components/auth-provider";
-import AdminNav from "@/components/navigation/admin-nav";
+import AdminNav from "@/components/navigation/admin/dashboard-nav";
 import NextTopLoader from 'nextjs-toploader';
 import AiChat from "@/components/chat/ai-chat";
 

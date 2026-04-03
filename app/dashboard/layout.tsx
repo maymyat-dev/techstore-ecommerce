@@ -1,4 +1,5 @@
-import DashBoardNavigation from "@/components/navigation/dashboard-nav";
+
+import AdminSidebar from "@/components/navigation/admin/admin-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { auth } from "@/server/auth";
 import {
@@ -51,12 +52,12 @@ export default async function Layout({
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
-        {isAdmin && <DashBoardNavigation routes={routes} />}
+        {isAdmin && <AdminSidebar routes={routes} />}
 
         <main className="flex flex-col flex-1 w-full overflow-x-hidden">
           {isAdmin && (
             <>
-              <header className="flex items-center gap-2 p-4 border-b bg-white md:hidden">
+              <header className="flex items-center gap-2 p-4 border-b md:hidden">
                 <SidebarTrigger />
                 <span className="font-semibold text-sm">Dashboard</span>
               </header>
@@ -67,7 +68,7 @@ export default async function Layout({
             </>
           )}
 
-          <section className="flex-1 max-w-7xl mx-auto w-full px-6 py-4">
+          <section className="flex-1 max-w-7xl mx-auto w-full px-6 py-4 md:mb-0 mb-20">
             {children}
           </section>
         </main>

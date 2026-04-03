@@ -11,7 +11,7 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
-} from "../ui/sidebar";
+} from "../../ui/sidebar";
 
 type Route = {
   label: string;
@@ -19,11 +19,11 @@ type Route = {
   icons: React.ReactNode;
 };
 
-type DashBoardNavigationProps = {
+type AdminSidebarProps = {
   routes: Route[];
 };
 
-const DashBoardNavigation = ({ routes }: DashBoardNavigationProps) => {
+const AdminSidebar = ({ routes }: AdminSidebarProps) => {
   const pathname = usePathname();
 
   return (
@@ -65,4 +65,4 @@ const DashBoardNavigation = ({ routes }: DashBoardNavigationProps) => {
   );
 };
 
-export default DashBoardNavigation;
+export default AdminSidebar;

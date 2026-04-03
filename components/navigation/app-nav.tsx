@@ -1,7 +1,7 @@
 
 import { auth } from '@/server/auth'
-import DesktopNav from './desktop-nav'
-import MobileNav from './mobile-nav';
+import DesktopNav from './desktop/desktop-nav'
+import MobileNav from './mobile/mobile-nav';
 
 
 const AppNav = async() => {
@@ -11,7 +11,7 @@ const AppNav = async() => {
   return (
     <>
       <DesktopNav user={session?.user} />
-      <MobileNav user={session?.user} />
+      <MobileNav />
     </>
   )
 }

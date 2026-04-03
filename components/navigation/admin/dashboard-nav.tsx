@@ -1,14 +1,13 @@
 import { auth } from "@/server/auth";
 import {
   CirclePlus,
-  CircleSmall,
   LayoutDashboard,
   ShieldUser,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-const AdminNav = async () => {
+const DashBoardNavigation = async () => {
   const session = await auth();
 
   if (session?.user.role !== "admin") {
@@ -91,4 +90,4 @@ const AdminNav = async () => {
   );
 };
 
-export default AdminNav;
+export default DashBoardNavigation;

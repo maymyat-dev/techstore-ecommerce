@@ -2,32 +2,13 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {desktopMenus } from "@/lib/nav-config";
 
-const menus = [
-  {
-    name: "AI Assistant",
-    path: "/ai-assistant",
-  },
-  {
-    name: "Support",
-    path: "/support",
-  },
-  {
-    name: "My Orders",
-    path: "/dashboard/orders",
-  },
-  {
-    name: "Settings",
-    path: "/dashboard/settings",
-  },
-];
-
-const MenuNav = () => {
+const MenuButton = () => {
   const pathname = usePathname();
   return (
-    <div>
-      <ul className="flex gap-4">
-        {menus.map((menu, index) => {
+      <ul className="hidden md:flex gap-4">
+        {desktopMenus.map((menu, index) => {
           const isActive = pathname === menu.path;
           return (
             <li key={index}>
@@ -41,8 +22,7 @@ const MenuNav = () => {
           );
         })}
       </ul>
-    </div>
   );
 };
 
-export default MenuNav;
+export default MenuButton;
