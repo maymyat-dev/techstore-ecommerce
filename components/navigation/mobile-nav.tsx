@@ -21,7 +21,7 @@ const MobileNav = ({ user }: { user: any }) => {
 
   return (
     <>
-      <div className="md:hidden flex sticky top-0 z-50 w-full h-16 border-b border-border bg-white/80 dark:bg-card backdrop-blur-md items-center justify-between px-4">
+      <div className="md:hidden flex sticky top-0 z-50 w-full h-16 border-b border-border bg-white/80 dark:bg-card backdrop-blur-md items-center justify-between px-4 mb-5">
         <NavLogo />
         <div className="flex items-center gap-2">
           <CartBtn />
@@ -30,12 +30,12 @@ const MobileNav = ({ user }: { user: any }) => {
         </div>
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 w-full z-50 px-4 pb-4">
-        <div className="relative flex items-center justify-between rounded-4xl px-6 border bg-white/90 dark:bg-card/90 backdrop-blur-xl shadow-2xl">
+      <div className="md:hidden fixed bottom-0 left-0 w-full z-50">
+        <div className="relative flex items-center justify-between rounded-t-4xl backdrop-blur-xl shadow-primary/10 border border-black/5 dark:border-white/10">
           
           <div className="flex flex-1 justify-around items-center">
             {menus.slice(0, 2).map((menu, index) => (
-              <Link key={index} href={menu.path} className={cn("flex flex-col items-center gap-1 transition-all", pathname === menu.path ? "text-primary scale-110" : "text-muted-foreground")}>
+              <Link key={index} href={menu.path} className={cn("flex flex-col items-center gap-1 transition-all", pathname === menu.path ? "text-primary scale-110" : "text-black dark:text-white")}>
                 {menu.icon}
                 <span className="text-[10px] font-medium">{menu.name}</span>
               </Link>
@@ -52,7 +52,7 @@ const MobileNav = ({ user }: { user: any }) => {
 
           <div className="flex flex-1 justify-around items-center">
             {menus.slice(2, 4).map((menu, index) => (
-              <Link key={index} href={menu.path} className={cn("flex flex-col items-center gap-1 transition-all", pathname === menu.path ? "text-primary scale-110" : "text-muted-foreground")}>
+              <Link key={index} href={menu.path} className={cn("flex flex-col items-center gap-1 transition-all", pathname === menu.path ? "text-primary scale-110" : "text-black dark:text-white")}>
                 {menu.icon}
                 <span className="text-[10px] font-medium">{menu.name}</span>
               </Link>

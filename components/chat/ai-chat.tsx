@@ -146,10 +146,10 @@ export default function AiChat() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto md:h-dvh h-100 flex flex-col bg-gray-50 dark:bg-gray-900 md:-mt-10 mt-0">
-      <div ref={containerRef} className="flex-1 overflow-y-auto">
+    <div className="max-w-7xl px-5 mx-auto md:h-[76vh] h-96 flex flex-col">
+      <div ref={containerRef} className="flex-1 overflow-y-auto no-scrollbar">
         <div
-          className="space-y-6 pt-6 px-6
+          className="space-y-6 
           pb-[calc(env(safe-area-inset-bottom)+16px)]"
         >
           {messages.map((message) => (
@@ -242,8 +242,7 @@ export default function AiChat() {
       </div>
 
       <div
-        className="fixed md:bottom-0 bottom-20 left-0 w-full z-40 
-     bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t"
+        className="fixed md:bottom-0 bottom-18 left-0 w-full z-40 backdrop-blur-md border-t"
       >
         <div
           className="max-w-4xl mx-auto px-4 pt-3 

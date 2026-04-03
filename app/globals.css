@@ -146,4 +146,12 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  .scroll-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 999px;
+  }
 }

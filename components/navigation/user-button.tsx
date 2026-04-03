@@ -25,7 +25,7 @@ type UserButtonProps = {
 const UserButton = ({ user }: UserButtonProps) => {
   return (
     <div className="flex items-center">
-      <div className="">
+      <div className="hidden md:block">
         {user?.email && (
         <span className="mr-3 text-sm text-muted-foreground">
           👋 Welcome,{" "}
