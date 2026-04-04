@@ -115,7 +115,7 @@ export default function AiChat() {
           data.text ||
           (data.products?.length
             ? "Here are some products I found:"
-            : "Sorry, I couldn't find anything 😢"),
+            : "Sorry, I couldn't find anything that matches your request 😢"),
         products: data.products || [],
       };
 

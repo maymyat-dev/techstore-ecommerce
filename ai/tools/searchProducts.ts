@@ -5,6 +5,7 @@ import { tool } from "ai";
 
 import { z } from "zod";
 import { ilike, eq, and, lte, or, desc, gte, notIlike } from "drizzle-orm";
+import { SYNONYM_MAP } from "@/lib/constants";
 
 type ProductSearchResult = {
   id: number;
@@ -33,16 +34,14 @@ export const createSearchProductsTool = (
     }),
 
     execute: async ({ query, maxPrice, minPrice, type }) => {
+      
       let searchQuery = query.toLowerCase().trim();
+      
 
-      searchQuery = searchQuery
-        .replace(/\bphone\b/g, "iphone")
-        .replace(/\btablet\b/g, "ipad")
-        .replace(/\blaptop\b/g, "macbook")
-        .replace(/\bmonitor\b/g, "imac")
-        .replace(/\bearphone\b/g, "airpods")
-        .replace(/\biwatch\b/g, "apple watch")
-        .replace(/\bwatch\b/g, "apple watch");
+      Object.entries(SYNONYM_MAP).forEach(([key, value]) => {
+        const regex = new RegExp(`\\b${key}\\b`, "g");
+        searchQuery = searchQuery.replace(regex, value);
+      });
 
       const words = searchQuery.split(/\s+/).filter((w) => w.length > 0);
       const modelNumber = words.find((word) => /^\d+$/.test(word));
@@ -74,12 +73,16 @@ export const createSearchProductsTool = (
 
         return !isPriceStopWord && !isPriceValue && !isModelNumber;
       });
+      
 
       let conditions = [];
 
       if (type) {
         conditions.push(ilike(productVariants.productType, `%${type}%`));
       }
+      console.log("Final Search Query:", searchQuery);
+      console.log("Search Words:", searchWords);
+      console.log("Conditions Length:", conditions.length);
 
       if (searchWords.length > 0) {
         searchWords.forEach((word) => {
@@ -87,6 +90,7 @@ export const createSearchProductsTool = (
             conditions.push(
               or(
                 ilike(products.title, `%${word}%`),
+                ilike(products.description, `%${word}%`),
                 ilike(productVariants.productType, `%${word}%`),
               ),
             );
