@@ -25,6 +25,12 @@ export default function AiChat() {
   const sendAudioRef = useRef<HTMLAudioElement | null>(null);
   const receiveAudioRef = useRef<HTMLAudioElement | null>(null);
 
+  const time = new Date().toLocaleDateString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  })
+
   useEffect(() => {
     sendAudioRef.current = new Audio("/sounds/send.mp3");
     receiveAudioRef.current = new Audio("/sounds/receive.mp3");
@@ -155,7 +161,7 @@ export default function AiChat() {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex ${message.role === "user" ? "justify-end text-right" : "justify-start"}`}
             >
               <div
                 className={`flex gap-3 w-full max-w-[90%] md:max-w-[80%] ${
@@ -194,8 +200,9 @@ export default function AiChat() {
                     >
                       {message.content}
                     </ReactMarkdown>
+                    
                   </div>
-
+                  
                   {message.products && message.products.length > 0 && (
                     <div className="w-full overflow-hidden">
                       <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
@@ -210,6 +217,8 @@ export default function AiChat() {
                       </div>
                     </div>
                   )}
+                  <span className="text-xs text-gray">{time}</span>
+
                 </div>
               </div>
             </div>
